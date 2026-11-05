@@ -56,7 +56,7 @@ char *scan_line(char *line)
     case SCAN_IGNORE:
       // pode iniciar nova string
       if (is_alpha(chr) || is_underscore(chr))
-        string_state = SCAN_SYMBOL;
+        string_state = SCAN_LABEL;
       else if (is_digit(chr))
         string_state = SCAN_NUMBER;
 
@@ -79,7 +79,7 @@ char *scan_line(char *line)
       }
       break;
 
-    case SCAN_SYMBOL:
+    case SCAN_LABEL:
       // deve continuar LABEL ou virar ignore
       if (is_ignore(chr))
         string_state = SCAN_IGNORE;

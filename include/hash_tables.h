@@ -1,39 +1,40 @@
-typedef struct
+typedef struct _instr_node
 {
   char *key;
   char *name;
-  int word_size;
-  int num_arguments;
+  int opcode;
+  int size_words;
+  int num_params;
   InstructionNode *next;
 } InstructionNode;
 
-typedef struct
+typedef struct _direc_node
 {
   char *key;
   char *name;
-  int word_size;
-  int num_arguments;
+  int num_params;
   DirectiveNode *next;
 } DirectiveNode;
 
-typedef struct
+typedef struct _symb_node
 {
   char *key;
   char *name;
-  int value;
-  SymbolNode *next;
+  int addr;
+  int is_relative;
   int *pendencies;
+  SymbolNode *next;
 } SymbolNode;
 
-typedef struct
+typedef struct _ext_symb_node
 {
   char *key;
   char *name;
-  int value;
-  UseNode *next;
-} UseNode;
+  int ref_addr;
+  ExternSymbolNode *next;
+} ExternSymbolNode;
 
-typedef struct
+typedef struct _macro_node
 {
   char *key;
   char *name;
@@ -42,7 +43,7 @@ typedef struct
   MacroNode *next;
 } MacroNode;
 
-typedef struct
+typedef struct _hash_table
 {
   int num_elements, capacity;
   void **table;

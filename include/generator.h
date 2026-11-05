@@ -1,10 +1,12 @@
 #include "include/hash_tables.h"
 
-typedef struct
+typedef struct _prog
 {
   char *code;
-  HashTable *symbol_table;  
-  HashTable *use_table;
+  HashTable *symbol_table;
+  HashTable *extern_table;
+  HashTable *macro_name_table;
+  char *macro_def_table;
 } Program;
 
 

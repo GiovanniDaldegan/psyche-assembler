@@ -1,0 +1,8 @@
+enum ParserStringState
+{
+  PARSE_NUMBER,
+  PARSE_LABEL,
+  PARSE_IGNORE,
+  PARSE_NONE,
+  PARSE_UNDEFINED
+};

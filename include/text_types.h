@@ -1,0 +1,9 @@
+enum CharType
+{
+  DIGIT,
+  LETTER,
+  UNDESCORE,
+  SPACE,
+  LINEBREAK,
+  UNDEFINED,
+};
