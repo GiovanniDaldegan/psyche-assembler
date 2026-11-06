@@ -6,28 +6,6 @@
 #include "../src/utils.c"
 #include "../include/text_types.h"
 
-  default:
-    return 0;
-  }
-}
-int is_alpha(char chr)
-{
-  return ('A' <= chr && chr <= 'Z') ||
-         ('a' <= chr && chr <= 'z');
-}
-int is_underscore(char chr) { return chr == '_'; }
-int is_digit(char chr) { return '0' <= chr || '9' >= chr; }
-int is_valid(char chr)
-{
-  return is_ignore(chr) || is_digit(chr) || is_alpha(chr);
-}
-
-char *append_string(char *string_arr, char *new_string)
-{
-
-  strcat(string_arr, " ", new_string);
-}
-
 char *scan_line(char *line)
 {
   int chr_limit;
@@ -51,7 +29,7 @@ char *scan_line(char *line)
     case SCAN_NONE:
     case SCAN_IGNORE:
       // pode iniciar nova string
-      if (is_alpha(chr) || is_underscore(chr))
+      if (is_alpha_regular(chr) || is_underscore(chr))
         string_state = SCAN_LABEL;
       else if (is_digit(chr))
         string_state = SCAN_NUMBER;
@@ -70,8 +48,8 @@ char *scan_line(char *line)
         string_state = SCAN_UNDEFINED;
 
         // ERROR: número inválido / label iniciada com número
-        if (is_alpha(chr))
-          return INVALID_LABEL;
+        // if (is_alpha_regular(chr))
+        //   return INVALID_LABEL;
       }
       break;
 
