@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 enum ScannerStringState
 {
   SCAN_NUMBER,

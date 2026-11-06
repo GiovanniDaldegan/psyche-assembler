@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "include/hash_tables.h"
+#include "../include/hash_tables.h"
 
 void set_instruction_node(
     InstructionNode *node,

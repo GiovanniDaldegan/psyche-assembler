@@ -1,14 +1,10 @@
-#include "include/scanner.h"
-#include "include/definitions.h"
+#include <stdio.h>
+#include <string.h>
 
-int is_ignore(char chr)
-{
-  switch (chr)
-  {
-  case ' ':
-  case '\n':
-    // case : // demais caracteres de quebra de linha / desconsiderados (CRLF?)
-    return 1;
+#include "../include/scanner.h"
+#include "../include/error_types.h"
+#include "../src/utils.c"
+#include "../include/text_types.h"
 
   default:
     return 0;
@@ -37,7 +33,7 @@ char *scan_line(char *line)
   int chr_limit;
   int chr_counter = 0;
   char *string;
-  enum ScannerState string_state;
+  int string_state;
   char **output;
 
   while (chr_counter < chr_limit)

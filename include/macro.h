@@ -1,4 +1,4 @@
-#include "include/hash_tables.h"
+#include "../include/hash_tables.h"
 
 MacroNode *search_macro(HashTable *macro_table, char *macro_name);
 int matching_args(MacroNode *macro, char **args);
