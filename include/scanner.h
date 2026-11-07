@@ -9,5 +9,5 @@ enum ScannerStringState
 
 
 
-char *scan_line(char *line);
-int scan_file(char *i_filename, char *o_filename);
+char **scan_line(char *line);
+char **scan_file(char *i_filename);

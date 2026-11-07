@@ -1,72 +1,74 @@
 #include <string.h>
+#include "../include/text_types.h"
+#include <stdlib.h>
 
-int is_ignore(char chr)
+int is_ignored(char chr)
 {
-  switch (chr)
+  char ignored[] = {' ', '\n', '\t', '\r'};
+  for (int i = 0; i < sizeof(ignored); i++)
   {
-  case ' ':
-  case '\n':
-    // case : // demais caracteres de quebra de linha / desconsiderados (CRLF?)
-    return 1;
-
-  default:
-    return 0;
+    if (chr == ignored[i])
+      return 1;
   }
+  return 0;
 }
 
-int is_alpha_regular(char chr)
+static inline int is_alpha_regular(char chr)
 {
   return ('A' <= chr && chr <= 'Z') ||
          ('a' <= chr && chr <= 'z');
 }
 
-int is_underscore(char chr) { return chr == '_'; }
+static inline int is_underscore(char chr) { return chr == '_'; }
 
-int is_digit(char chr) { return '0' <= chr || '9' >= chr; }
+static inline int is_digit(char chr) { return '0' <= chr || '9' >= chr; }
 
-int is_valid(char chr)
+static inline int is_valid(char chr)
 {
-  return is_ignore(chr) || is_digit(chr) || is_alpha_regular(chr);
+  return is_ignored(chr) || is_digit(chr) || is_alpha_regular(chr);
 }
 
-char capitalize_char(char chr)
+static inline char capitalize_char(char chr)
 {
   return 'a' <= chr && chr <= 'z'
              ? chr + ('A' - 'a')
              : chr;
 }
 
-char *capitalize_str(char *str)
+void capitalize_str(char *str)
 {
   int len = strlen(str);
   for (int i = 0; i < len; i++)
     str[i] = capitalize_char(str[i]);
+}
 
+char *trim_l(char *str)
+{
+  while (is_ignored(*str))
+    str++;
   return str;
 }
 
-char *append_string(char *string_arr, char *new_string)
+char *trim_r(char *str)
 {
-  // strcat(string_arr, " ", new_string);
-}
+  char *end = str + strlen(str) - 1;
+  while (is_ignored(*end))
+    end--;
 
-char *remove_char(char *str, char chr)
-{
-  int i, j;
-  int len = strlen(str);
-
-  for (i = j = 0; i < len; i++)
-  {
-    if (str[i] != chr)
-      str[j++] = str[i];
-  }
-
-  str[j] = '\0';
+  *(end + 1) = '\0';
   return str;
 }
 
-// todo:
-// - commit das assinaturas de função e demais trabalho anterior X
-// - ver oq tá truncando os tokens na leitura da linha
-// - permitir : no token resultante do scanning
-// - formalizar saída do scanner
+char *str_trim(char *str)
+{
+  return trim_l(trim_r(str));
+}
+
+char *init_string(char *str)
+{
+  char *str_aloc = (char *)malloc(sizeof(char) * (strlen(str) + 1));
+  for (int i = 0; str[i] != '\0'; i++)
+    str_aloc[i] = str[i];
+
+  return str_aloc;
+}

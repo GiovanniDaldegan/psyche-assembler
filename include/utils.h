@@ -1,5 +1,5 @@
 // char categories
-int is_ignore(char chr);
+int is_ignored(char chr);
 int is_alpha_regular(char chr);
 int is_underscore(char chr);
 int is_digit(char chr);

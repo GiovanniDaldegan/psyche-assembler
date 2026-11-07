@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -6,7 +7,7 @@
 #include "../src/utils.c"
 #include "../include/text_types.h"
 
-char *scan_line(char *line)
+char **scan_line(char *line)
 {
   int chr_limit;
   int chr_counter = 0;
@@ -39,7 +40,7 @@ char *scan_line(char *line)
 
     case SCAN_NUMBER:
       // deve continuar number ou virar ignore
-      if (is_ignore(chr))
+      if (is_ignored(chr))
         string_state = SCAN_IGNORE;
       else if (is_digit(chr))
         string = strcat(string, &chr);
@@ -55,7 +56,7 @@ char *scan_line(char *line)
 
     case SCAN_LABEL:
       // deve continuar LABEL ou virar ignore
-      if (is_ignore(chr))
+      if (is_ignored(chr))
         string_state = SCAN_IGNORE;
       else
         string = strcat(string, &chr);
@@ -70,36 +71,48 @@ char *scan_line(char *line)
   return output;
 }
 
-int scan_file(char *i_filename, char *o_filename)
+char **scan_file(char *i_filename)
 {
   FILE *i_file = fopen(i_filename, "r");
-  // input file errors
-
-  int line_counter;
-  int line_limit;
-  // int position_counter;
-
-  char *output;
-
-  while (line_counter < line_limit)
+  // check input file errors
+  if (i_file == NULL)
   {
-    // dividir arquivo em linhas
-
-    // obter próxima linha
-    char *line;
-    char *line_scan = scan_line(line);
-    strcat(output, line_scan);
-
-    line_counter++;
+    printf("ERRO: arquivo inexistente.\n");
+    return NULL;
   }
 
-  fclose(i_filename);
+  char **token_array = (char **)malloc(sizeof(char *) * 100);
 
-  FILE *o_file = fopen(o_filename, "w");
-  // output file errors
+  char *line = NULL;
+  size_t len = 0;
+  size_t read;
+
+  int pos = 0;
+  while ((read = getline(&line, &len, i_file)) != EOF)
+  {
+    for (
+        char *token = strtok(line, " ");
+        token != NULL;
+        token = strtok(NULL, " "))
+    {
+      // format token
+      token = str_trim(token);
+      capitalize_str(token);
+
+      // ignore comments
+      if (token[0] == ';' || token[0] == '\0')
+        break;
+
+      // store token
+      token_array[pos++] = init_string(token);
+    }
+  }
+
+  fclose(i_file);
 }
 
 int main()
 {
+  scan_file("code_comment_CRLF.asm");
   return 0;
 }
