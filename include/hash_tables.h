@@ -1,66 +1,54 @@
 typedef struct _instr_node
 {
-  char *key;
-  char *name;
-  int opcode;
-  int size_words;
-  int num_params;
-  InstructionNode *next;
+  char *key, *name;
+  int opcode, size_words, num_params;
+  struct _instr_node *next;
 } InstructionNode;
 
 typedef struct _direc_node
 {
-  char *key;
-  char *name;
+  char *key, *name;
   int num_params;
-  DirectiveNode *next;
+  struct _direc_node *next;
 } DirectiveNode;
 
 typedef struct _symb_node
 {
-  char *key;
-  char *name;
-  int addr;
-  int is_relative;
-  int *pendencies;
-  SymbolNode *next;
+  char *key, *name;
+  int addr, is_relative, *pendencies;
+  struct _symb_node *next;
 } SymbolNode;
 
 typedef struct _ext_symb_node
 {
-  char *key;
-  char *name;
+  char *key, *name;
   int ref_addr;
-  ExternSymbolNode *next;
+  struct _ext_symb_node *next;
 } ExternSymbolNode;
 
 typedef struct _macro_node
 {
-  char *key;
-  char *name;
-  char *num_params;
-  char *code;
-  MacroNode *next;
+  char *key, *name, *num_params, *code;
+  struct _macro_node *next;
 } MacroNode;
 
 typedef struct _hash_table
 {
-  int num_elements, capacity;
+  int capacity, num_elements;
   void **table;
 } HashTable;
 
 int instruction_hash_function(HashTable *table, char *key);
 
-void init_instruction_hash_table(HashTable *instruction_table, int num_elements, int capacity);
-void init_directive_hash_table(HashTable *directive_table, int num_elements, int capacity);
-void init_symbol_hash_table(HashTable *symbol_table, int num_elements, int capacity);
-void init_macro_hash_table(HashTable *macro_table, int num_elements, int capacity);
-// void init_macro_hash_table(HashTable *table, int num_elements, int capacity);
+void init_hash_table_instruction(HashTable *instruction_table, int capacity);
+void init_hash_table_directive(HashTable *directive_table, int capacity);
+void init_hash_table_symbol(HashTable *symbol_table, int capacity);
+void init_hash_table_macro(HashTable *macro_table, int capacity);
 
-void set_instruction_node(InstructionNode *node, char *key, int opcode, int word_size, int num_params);
-void set_directive_node(DirectiveNode *node, char *key, char *name, int num_params);
-void set_symbol_node(SymbolNode *node, char *key, char *name);
-void set_macro_node(MacroNode *node, char *key, char *name, char *num_params, char *code);
+void set_node_instruction(InstructionNode *node, char *key, char *name, int opcode, int word_size, int num_params);
+void set_node_directive(DirectiveNode *node, char *key, char *name, int num_params);
+void set_node_symbol(SymbolNode *node, char *key, char *name);
+void set_node_macro(MacroNode *node, char *key, char *name, char *num_params, char *code);
 
 void insert_instruction(HashTable *instruction_table, InstructionNode *instruction);
 void insert_directive(HashTable *directive_table, DirectiveNode *directive);
@@ -73,7 +61,7 @@ SymbolNode *search_symbol(HashTable *symbol_table, char *symbol_name);
 MacroNode *search_macro(HashTable *macro_table, char *macro_name);
 
 // definições para implementação por vetor, por garantia
-InstructionNode *search_instruction_tmp(InstructionNode *instruction_table, char *instruction_name);
-DirectiveNode *search_directive_tmp(DirectiveNode *directive_table, char *directive_name);
-SymbolNode *search_symbol_tmp(SymbolNode *symbol_table, char *symbol_name);
-MacroNode *search_macro_tmp(MacroNode *macro_table, char *macro_name);
+InstructionNode *search_instruction_tmp(HashTable *instruction_table, char *instruction_name);
+DirectiveNode *search_directive_tmp(HashTable *directive_table, char *directive_name);
+SymbolNode *search_symbol_tmp(HashTable *symbol_table, char *symbol_name);
+MacroNode *search_macro_tmp(HashTable *macro_table, char *macro_name);

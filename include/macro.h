@@ -1,5 +1,6 @@
 #include "../include/hash_tables.h"
 
-MacroNode *search_macro(HashTable *macro_table, char *macro_name);
+// macro não pode ser recursiva; definição de macro deve preceder uso
+MacroNode *define_macro(char *macro);
 int matching_args(MacroNode *macro, char **args);
 char *expand_macro(MacroNode *macro, char **args);

@@ -1,11 +1,13 @@
 #include <stdlib.h>
 #include "../include/hash_tables.h"
 
-void set_instruction_node(
+#define HASH_TABLE_INCREMENT 20
+
+void set_node_instruction(
     InstructionNode *node,
     char *key,
     char *name,
-    char *opcode,
+    int opcode,
     int size_words,
     int num_params)
 {
@@ -17,10 +19,10 @@ void set_instruction_node(
   node->next = NULL;
 }
 
-void set_directive_node(
+void set_node_directive(
     DirectiveNode *node,
-    char *name,
     char *key,
+    char *name,
     int num_params)
 {
   node->key = key;
@@ -29,21 +31,20 @@ void set_directive_node(
   node->next = NULL;
 }
 
-void init_instruction_hash_map(HashTable *table)
+void init_hash_table_instruction(HashTable *table, int capacity)
 {
-  table->capacity = 20;
+  table->capacity = HASH_TABLE_INCREMENT;
   table->num_elements = 0;
 
-  table->table =
-      (HashTable **)malloc(sizeof(InstructionNode) * table->capacity);
+  table->table = (void **)malloc(sizeof(InstructionNode) * table->capacity);
 }
 
-void init_instruction_hash_map(HashTable *table)
+void init_hash_table_directive(HashTable *table, int capacity)
 {
-  table->capacity = 20;
+  table->capacity = HASH_TABLE_INCREMENT;
   table->num_elements = 0;
 
-  table->table = (HashTable **)malloc(sizeof(DirectiveNode) * table->capacity);
+  table->table = (void **)malloc(sizeof(DirectiveNode) * table->capacity);
 }
 
 InstructionNode instruction_table[] = {
