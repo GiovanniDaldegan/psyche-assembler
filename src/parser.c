@@ -52,8 +52,8 @@ int get_token_type(char *token)
 }
 
 static inline int token_is_reserved(InstructionNode *instruction_arr,
-                      DirectiveNode *directive_arr,
-                      char *token)
+                                    DirectiveNode *directive_arr,
+                                    char *token)
 {
   return search_instruction_tmp(instruction_arr, token) ||
          search_directive_tmp(directive_arr, token);
@@ -68,6 +68,67 @@ int parse_directive(DirectiveNode **directive_arr,
                     char **direc_ptr,
                     DirectiveNode *direc)
 {
+  // 1st token: argument on right
+  char *token = *direc_ptr + 1;
+
+  if (token_is_end_of_line(token))
+  {
+    if (direc->num_params == 0)
+      return 0;
+    else
+    {
+      // syntax error: too few arguments
+      printf("Erro sintático: poucos argumentos para diretiva %s\n",
+             direc->name);
+      return 1;
+    }
+  }
+
+  if (str_compare(direc->name, "CONST") ||
+      str_compare(direc->name, "EQU") ||
+      str_compare(direc->name, "+"))
+  {
+    if (get_token_type(token) != PARSE_NUMBER)
+    {
+      printf("Erro sintático: argumento %s inválido para diretiva %s.\n",
+             token, direc->name);
+      return 1;
+    }
+  }
+
+  else if (str_compare(direc->name, "EXTERN") ||
+           str_compare(direc->name, "SECTION"))
+  {
+    if (get_token_type(token) != PARSE_SYMBOL)
+    {
+      printf("Erro sintático: argumento %s inválido para diretiva %s.\n",
+             token, direc->name);
+      return 1;
+    }
+  }
+
+  else if (str_compare(direc->name, "IF"))
+  {
+    int type = get_token_type(token);
+    if (type != PARSE_NUMBER && type != PARSE_SYMBOL)
+    {
+      printf("Erro sintático: argumento %s inválido para diretiva %s.\n",
+             token, direc->name);
+      return 1;
+    }
+  }
+
+  // 2nd token: \n
+  token++;
+  if (!token_is_end_of_line(token))
+  {
+    // syntax error: too few arguments
+    printf("Erro sintático: muitos argumentos para diretiva %s\n",
+           direc->name);
+    return 1;
+  }
+
+  return 0;
 }
 
 int parse_instruction(InstructionNode **instruction_arr,
