@@ -35,6 +35,7 @@ void scan_line(char *line, TokenArray *token_arr, HashTable *symbol_table)
     // error: invalid char
     if (!token_is_valid(token))
     {
+      printf("Erro léxico: token \"%s\" contém caractere inváido.\n", token);
       return;
       // INVALID_CHAR;
     }

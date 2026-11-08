@@ -45,8 +45,9 @@ Algumas regras da linguagem:
 - Só pode ter um rótulo por linha;
 - Instruções apenas podem receber rótulos como argumento, não constantes
   numéricas;
-- Os comentários são iniciados com ponto e vírgula (";"), desde que haja espaço
-  antes do comentário (`STOP; fim do programa` é um erro léxico).
+- Os comentários são iniciados com ponto e vírgula (`;`), desde que haja espaço
+  antes do comentário (`STOP; fim do programa` é um erro léxico);
+- Os únicos caracteres especiais válidos são: `_`, `+` e `:`.
 
 
 O programa deve ser dividido em seção de dados (`SECTION DATA`) e seção de

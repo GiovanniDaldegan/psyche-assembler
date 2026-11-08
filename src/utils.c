@@ -1,6 +1,7 @@
 #include <string.h>
 #include "../include/text_types.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 int char_is_ignored(char chr)
 {
@@ -19,15 +20,21 @@ static inline int char_is_alpha_regular(char chr)
          ('a' <= chr && chr <= 'z');
 }
 
-static inline int char_is_underscore(char chr) { return chr == '_'; }
+static inline int char_is_valid_special(char chr)
+{
+  return chr == '_' ||
+         chr == ':' ||
+         chr == '+';
+}
 
-static inline int char_is_digit(char chr) { return '0' <= chr || '9' >= chr; }
+static inline int char_is_digit(char chr) { return '0' <= chr && chr <= '9'; }
 
 static inline int char_is_valid(char chr)
 {
   return char_is_ignored(chr) ||
          char_is_digit(chr) ||
-         char_is_alpha_regular(chr);
+         char_is_alpha_regular(chr) ||
+         char_is_valid_special(chr);
 }
 
 static inline char capitalize_char(char chr)
