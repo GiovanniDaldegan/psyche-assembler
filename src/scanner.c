@@ -17,6 +17,16 @@ int token_is_valid(char *token)
   return 1;
 }
 
+int token_is_symbol(char *token)
+{
+  for (int i = 0; token[i] != '\0'; i++)
+  {
+    if (!char_is_symbol_valid(token[i]))
+      return 0;
+  }
+  return 1;
+}
+
 void scan_line(char *line, TokenArray *token_arr, HashTable *symbol_table)
 {
   for (
@@ -40,9 +50,26 @@ void scan_line(char *line, TokenArray *token_arr, HashTable *symbol_table)
       // INVALID_CHAR;
     }
 
-    // store token
+    // error invalid token start
+    if (strlen(token) > 1 &&
+        !char_is_alpha_regular(token[0]) &&
+        !char_is_underscore(token[0]))
+    {
+      printf("Erro léxico: símbolo \"%s\" contém caractere inicial inválido.\n",
+             token);
+      return;
+    }
+
+    // store symbol
     if (token[strlen(token) - 1] == ':')
       token[strlen(token) - 1] = '\0';
+
+    if (!token_is_symbol(token))
+    {
+      // error invalid expression
+      printf("Erro léxico: expressão \"%s\" não tem separação de espaços.\n",
+             token);
+    }
 
     token_array_insert(token_arr, token);
   }
@@ -55,7 +82,7 @@ void scan_file(char *i_filename, TokenArray *token_arr, HashTable *symbol_table)
   // check input file errors
   if (i_file == NULL)
   {
-    printf("ERRO: arquivo fonte inexistente.\n");
+    printf("Erro: arquivo fonte inexistente.\n");
     return;
   }
 

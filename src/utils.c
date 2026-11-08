@@ -20,6 +20,8 @@ static inline int char_is_alpha_regular(char chr)
          ('a' <= chr && chr <= 'z');
 }
 
+int char_is_underscore(char chr) { return chr == '_'; }
+
 static inline int char_is_valid_special(char chr)
 {
   return chr == '_' ||
@@ -35,6 +37,13 @@ static inline int char_is_valid(char chr)
          char_is_digit(chr) ||
          char_is_alpha_regular(chr) ||
          char_is_valid_special(chr);
+}
+
+static inline int char_is_symbol_valid(char chr)
+{
+  return char_is_digit(chr) ||
+         char_is_alpha_regular(chr) ||
+         char_is_underscore(chr);
 }
 
 static inline char capitalize_char(char chr)
