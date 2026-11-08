@@ -79,6 +79,9 @@ char *init_string(char *str)
 
 int str_compare(char *str1, char *str2)
 {
+  if (!str1 || !str2)
+    return 0;
+
   int i = 0;
 
   do
@@ -99,4 +102,17 @@ void print_string_array(char **arr, int n_elements)
         ? printf("%s, ", arr[i])
         : printf("%s\n", arr[i]);
   }
+}
+
+char *get_filename_extention(char *filename)
+{
+  char *back = filename + strlen(filename);
+  while (back > filename)
+  {
+    if (*back == '.')
+      return back;
+
+    back--;
+  }
+  return NULL;
 }

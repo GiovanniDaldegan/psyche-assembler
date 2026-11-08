@@ -3,116 +3,105 @@
 #include <string.h>
 
 #include "../include/scanner.h"
+#include "../include/utils.h"
 #include "../include/error_types.h"
-#include "../src/utils.c"
-#include "../include/text_types.h"
 
-char **scan_line(char *line)
+#define TOKEN_ARRAY_INCREMENT 100
+
+TokenArray *init_array_token(int capacity)
 {
-  int chr_limit;
-  int chr_counter = 0;
-  char *string;
-  int string_state;
-  char **output;
+  TokenArray *token_arr = (TokenArray *)malloc(sizeof(TokenArray));
 
-  while (chr_counter < chr_limit)
-  {
-    char chr = line[chr_counter];
+  token_arr->capacity = capacity;
+  token_arr->back = 0;
+  token_arr->array = (char **)malloc(sizeof(char *) * capacity);
 
-    if (!is_valid(chr))
-    {
-      // ERROR: caractere inválido
-      return INVALID_CHAR;
-    }
-
-    switch (string_state)
-    {
-    case SCAN_NONE:
-    case SCAN_IGNORE:
-      // pode iniciar nova string
-      if (is_alpha_regular(chr) || is_underscore(chr))
-        string_state = SCAN_LABEL;
-      else if (is_digit(chr))
-        string_state = SCAN_NUMBER;
-
-      // reiniciar string;
-      break;
-
-    case SCAN_NUMBER:
-      // deve continuar number ou virar ignore
-      if (is_ignored(chr))
-        string_state = SCAN_IGNORE;
-      else if (is_digit(chr))
-        string = strcat(string, &chr);
-      else
-      {
-        string_state = SCAN_UNDEFINED;
-
-        // ERROR: número inválido / label iniciada com número
-        // if (is_alpha_regular(chr))
-        //   return INVALID_LABEL;
-      }
-      break;
-
-    case SCAN_LABEL:
-      // deve continuar LABEL ou virar ignore
-      if (is_ignored(chr))
-        string_state = SCAN_IGNORE;
-      else
-        string = strcat(string, &chr);
-      break;
-
-    default:
-      // ERROR: já lascou, não identificado
-      break;
-    }
-  }
-
-  return output;
+  return token_arr;
 }
 
-char **scan_file(char *i_filename)
+void token_array_resize(TokenArray *token_arr, int increment)
+{
+  token_arr->capacity += increment;
+  char **new_array = (char **)malloc(sizeof(char **) * token_arr->capacity);
+
+  for (int i = 0; i < token_arr->back; i++)
+    new_array[i] = token_arr->array[i];
+
+  free(token_arr->array);
+  token_arr->array = new_array;
+}
+
+void token_array_insert(TokenArray *token_arr, char *token)
+{
+  if (token_arr->back > token_arr->capacity)
+  {
+    printf("Token array deu overflow!\n");
+    return;
+  }
+  else if (token_arr->back == token_arr->capacity)
+    token_array_resize(token_arr, TOKEN_ARRAY_INCREMENT);
+
+  token_arr->array[token_arr->back++] = init_string(token);
+}
+
+int token_is_valid(char *token)
+{
+  for (int i = 0; i < strlen(token); i++)
+  {
+    if (!char_is_valid(token[i]))
+      return 0;
+  }
+  return 1;
+}
+
+void scan_line(char *line, TokenArray *token_arr, HashTable *symbol_table)
+{
+  for (
+      char *token = strtok(line, " ");
+      token != NULL;
+      token = strtok(NULL, " "))
+  {
+    // format token
+    token = str_trim(token);
+    capitalize_str(token);
+
+    // ignore comments
+    if (token[0] == ';' || token[0] == '\0')
+      break;
+
+    // error: invalid char
+    if (!token_is_valid(token))
+    {
+      return;
+      // INVALID_CHAR;
+    }
+
+    // store token
+    if (token[strlen(token) - 1] == ':')
+      token[strlen(token) - 1] = '\0';
+
+    token_array_insert(token_arr, token);
+  }
+}
+
+void scan_file(char *i_filename, TokenArray *token_arr, HashTable *symbol_table)
 {
   FILE *i_file = fopen(i_filename, "r");
   // check input file errors
   if (i_file == NULL)
   {
-    printf("ERRO: arquivo inexistente.\n");
-    return NULL;
+    printf("ERRO: arquivo fonte inexistente.\n");
+    return;
   }
-
-  char **token_array = (char **)malloc(sizeof(char *) * 100);
 
   char *line = NULL;
   size_t len = 0;
   size_t read;
 
-  int pos = 0;
   while ((read = getline(&line, &len, i_file)) != EOF)
   {
-    for (
-        char *token = strtok(line, " ");
-        token != NULL;
-        token = strtok(NULL, " "))
-    {
-      // format token
-      token = str_trim(token);
-      capitalize_str(token);
-
-      // ignore comments
-      if (token[0] == ';' || token[0] == '\0')
-        break;
-
-      // store token
-      token_array[pos++] = init_string(token);
-    }
+    scan_line(line, token_arr, symbol_table);
   }
 
   fclose(i_file);
-}
-
-int main()
-{
-  scan_file("code_comment_CRLF.asm");
-  return 0;
 }

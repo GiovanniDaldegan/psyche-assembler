@@ -16,8 +16,12 @@ typedef struct _token_array
   char **array;
 } TokenArray;
 
+int token_is_valid(char *token);
+
 TokenArray *init_array_token(int capacity);
 void token_array_resize(TokenArray *arr, int increment);
+void token_array_resize(TokenArray *token_array, int increment);
+void token_array_insert(TokenArray *token_array, char *token);
 
 void scan_line(char *line, TokenArray *token_arr, HashTable *symbol_table);
 void scan_file(char *i_filename, TokenArray *token_arr, HashTable *symbol_table);

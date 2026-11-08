@@ -47,38 +47,40 @@ void init_hash_table_directive(HashTable *table, int capacity)
   table->table = (void **)malloc(sizeof(DirectiveNode) * table->capacity);
 }
 
+/*
 InstructionNode instruction_table[] = {
-    {"ADD", 1, 2, NULL},
-    {"SUB", 2, 2, NULL},
-    {"MUL", 3, 2, NULL},
-    {"DIV", 4, 2, NULL},
-    {"JMP", 5, 2, NULL},
-    {"JMPN", 6, 2, NULL},
-    {"JMPP", 7, 2, NULL},
-    {"JMPZ", 8, 2, NULL},
-    {"COPY", 9, 3, NULL},
-    {"LOAD", 10, 2, NULL},
-    {"STORE", 11, 2, NULL},
-    {"INPUT", 12, 2, NULL},
-    {"OUTPUT", 13, 2, NULL},
-    {"STOP", 14, 1, NULL},
+    {"", "ADD", 1, 2, 1, (void *)NULL},
+    {"", "SUB", 2, 2, 1, (void *)NULL},
+    {"", "MUL", 3, 2, 1, (void *)NULL},
+    {"", "DIV", 4, 2, 1, (void *)NULL},
+    {"", "JMP", 5, 2, 1, (void *)NULL},
+    {"", "JMPN", 6, 2, 1, (void *)NULL},
+    {"", "JMPP", 7, 2, 1, (void *)NULL},
+    {"", "JMPZ", 8, 2, 1, (void *)NULL},
+    {"", "COPY", 9, 3, 2, (void *)NULL},
+    {"", "LOAD", 10, 2, 1, (void *)NULL},
+    {"", "STORE", 11, 2, 1, (void *)NULL},
+    {"", "INPUT", 12, 2, 1, (void *)NULL},
+    {"", "OUTPUT", 13, 2, 1, (void *)NULL},
+    {"", "STOP", 14, 1, 0, (void *)NULL},
 };
 
 DirectiveNode directive_table[] = {
-    {"SPACE", 0, NULL},
-    {"CONST", 1, NULL},
-    {"EQU", 2, NULL},
-    {"IF", 1, NULL},
-    {"ORG", 1, NULL},
-    {"MACRO", -1, NULL},
-    {"ENDMACRO", 0, NULL},
-    {"BEGIN", 0, NULL},
-    {"END", 0, NULL},
-    {"PUBLIC", 1, NULL},
-    {"EXTERN", 1, NULL},
-    {"+", 1, NULL},
-    {"SECTION", 1, NULL},
+    {"", "SPACE", 0, (void *)NULL},
+    {"", "CONST", 1, (void *)NULL},
+    {"", "EQU", 2, (void *)NULL},
+    {"", "IF", 1, (void *)NULL},
+    {"", "ORG", 1, (void *)NULL},
+    {"", "MACRO", -1, (void *)NULL},
+    {"", "ENDMACRO", 0, (void *)NULL},
+    {"", "BEGIN", 0, (void *)NULL},
+    {"", "END", 0, (void *)NULL},
+    {"", "PUBLIC", 1, (void *)NULL},
+    {"", "EXTERN", 1, (void *)NULL},
+    {"", "+", 2, (void *)NULL},
+    {"", "SECTION", 1, (void *)NULL},
 };
+*/
 
 /*
 tabelas de consulta
