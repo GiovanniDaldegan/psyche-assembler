@@ -1,0 +1,114 @@
+# Psyche Assembler
+Projeto de Software Básico, UnB 2026/2.
+
+Desenvolvido por Giovanni Daldegan, 232002520.
+
+## Montador
+
+O programa "montador" implementa um montador simplificado para a linguagem
+*assembly* inventada apresentada em aula.
+
+Deve ser fornecido arquivo de extensão `.asm` para montagem; o resultado será um
+arquivo de texto `.obj` de mesmo nome.
+
+A chamada do montador deve ser como abaixo:
+```
+./montador <código-fonte>.asm
+```
+
+Executar `./montador -h` apresenta um resumo destas informações de uso.
+
+Caso o programa apresente erros léxicos, sintáticos ou semânticos, o montador
+cancela a execução e indica o tipo do erro e, se possível, sua causa.
+
+## Ligador
+
+O programa "ligador" recebe até 3 arquivos fonte e os liga sequencialmente. O
+primeiro arquivo deve conter a rotina "*main*" no seu início,
+
+Todos os arquivos devem ser de tipo `.obj` ou `.asm`, de forma que os arquivos
+não montados são primeiro montados por uma chamada ao montador e, então,
+ligados.
+
+Sua saída é o arquivo de texto `.LIG`, um executável com todos os módulos
+ligados.
+
+## Linguagem *assembly* inventada
+
+A linguagem não é *case-sensitive*; os tokens devem ser separados por espaços;
+os comentários são iniciados com ponto e vírgula (";"). Abaixo há um exexmplo de
+código fonte.
+
+O programa deve ser dividido em seção de dados (`SECTION DATA`) e seção de
+programa (`SECTION TEXT`).
+
+```
+SECTION DATA
+N1:     SPACE
+N2:     CONST -48
+N4:     SPACE
+
+SECTION TEXT
+ROT:    INPUT N1
+        COPY N1 N4 ;comentario
+        COPY N2 N3
+        COPY N3 N3
+        OUTPUT N3
+        STOP
+```
+
+A seguir, são apresentadas as diretivas implementadas e as instruções da
+linguagem estudada.
+
+### Diretivas
+
+Legenda: \
+ARG[i]: i-ésimo argumento fornecido 
+
+| Diretiva | Nº args    | Descrição                                                 |
+| -------- | ---------- | --------------------------------------------------------- |
+| SPACE    | 0          | reserva 1 palavra de valor indefinido "XX"                |
+| CONST    | 1          | reserva 1 palavra com o valor de ARG[1]                   |
+| EQU      | 2 (infixo) | define o símbolo ARG[1] como sinônimo para o valor ARG[2] |
+| IF       | 1          | caso ARG[1] == 0, ignora a linha seguinte na montagem     |
+| BEGIN    | 0          | inicia módulo                                             |
+| END      | 0          | termina módulo                                            |
+| PUBLIC   | 0          | indica símbolo definido no módulo                         |
+| EXTERN   | 1          | indica ARG[1] como símbolo definido em módulo externo     |
+| +        | 2 (infixo) | soma o valor de um símbolo (ARG[1]) a um número (ARG[2])  |
+| SECTION  | 1          | inicia seção de nome ARG[1] (TEXT ou DATA)                |
+
+> [!note]
+> A diretiva EQU deve ser utilizada apenas antes das seções TEXT e DATA. \
+> A diretiva IF deve ser utilizada exclusivamente na seção TEXT.
+>
+> As diretivas ORG, MACRO e ENDMACRO não são implementadas pelo montador.
+
+### Instruções
+
+O projeto do processador conta com 2 registradores:
+- ACC: acumulador, utilizado para todas operações
+- PC: contador de programa, indica a próxima instrução para ser executada
+
+Legenda:\
+**mem(PTR)**: valor guardado em memória no endereço PTR \
+**in()**: guarda o valor lido da entrada no endereço PTR \
+**out()**: imprime o valor guardado em PTR na saída \
+**ARG[i]**: i-ésimo argumento fornecido 
+
+| Instrução | opcode | tamanho | Nº args | descrição                          |
+| --------- | ------ | ------- | ------- | ---------------------------------- |
+| ADD       | 1      | 2       | 1       | ACC <- ACC + mem(ARG[1])           |
+| SUB       | 2      | 2       | 1       | ACC <- ACC - mem(ARG[1])           |
+| MUL       | 3      | 2       | 1       | ACC <- ACC * mem(ARG[1])           |
+| DIV       | 4      | 2       | 1       | ACC <- ACC / mem(ARG[1]) (inteira) |
+| JMP       | 5      | 2       | 1       | PC <- ARG[1]                       |
+| JMPN      | 6      | 2       | 1       | PC <- ARG[1] se ACC < 0            |
+| JMPP      | 7      | 2       | 1       | PC <- ARG[1] se ACC > 0            |
+| JMPZ      | 8      | 2       | 1       | PC <- ARG[1] se ACC == 0           |
+| COPY      | 9      | 3       | 2       | mem(ARG[2]) <- mem(ARG[2])         |
+| LOAD      | 10     | 2       | 1       | ACC <- mem(ARG[1])                 |
+| STORE     | 11     | 2       | 1       | mem(ARG[1]) <- ACC                 |
+| INPUT     | 12     | 2       | 1       | mem(ARG[1]) <- in()                |
+| OUTPUT    | 13     | 2       | 1       | mem(ARG[1]) <- out()               |
+| STOP      | 14     | 1       | 0       | termina o programa                 |
