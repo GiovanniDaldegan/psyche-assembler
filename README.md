@@ -106,8 +106,8 @@ O projeto do processador conta com 2 registradores:
 
 Legenda:\
 **mem(PTR)**: valor guardado em memória no endereço PTR \
-**in()**: guarda o valor lido da entrada no endereço PTR \
-**out()**: imprime o valor guardado em PTR na saída \
+**in()**: retorna o valor lido da entrada \
+**out(PTR)**: imprime o valor guardado em PTR na saída \
 **ARG[i]**: i-ésimo argumento fornecido 
 
 | Instrução | opcode | tamanho | Nº args | descrição                          |
@@ -124,5 +124,5 @@ Legenda:\
 | LOAD      | 10     | 2       | 1       | ACC <- mem(ARG[1])                 |
 | STORE     | 11     | 2       | 1       | mem(ARG[1]) <- ACC                 |
 | INPUT     | 12     | 2       | 1       | mem(ARG[1]) <- in()                |
-| OUTPUT    | 13     | 2       | 1       | mem(ARG[1]) <- out()               |
+| OUTPUT    | 13     | 2       | 1       | out(mem(ARG[1]))                   |
 | STOP      | 14     | 1       | 0       | termina o programa                 |
