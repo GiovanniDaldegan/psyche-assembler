@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include "../include/hash_tables.h"
+#include "../include/utils.h"
+#include "../include/token_array.h"
 
 #define HASH_TABLE_INCREMENT 20
 
@@ -47,40 +49,37 @@ void init_hash_table_directive(HashTable *table, int capacity)
   table->table = (void **)malloc(sizeof(DirectiveNode) * table->capacity);
 }
 
-/*
-InstructionNode instruction_table[] = {
-    {"", "ADD", 1, 2, 1, (void *)NULL},
-    {"", "SUB", 2, 2, 1, (void *)NULL},
-    {"", "MUL", 3, 2, 1, (void *)NULL},
-    {"", "DIV", 4, 2, 1, (void *)NULL},
-    {"", "JMP", 5, 2, 1, (void *)NULL},
-    {"", "JMPN", 6, 2, 1, (void *)NULL},
-    {"", "JMPP", 7, 2, 1, (void *)NULL},
-    {"", "JMPZ", 8, 2, 1, (void *)NULL},
-    {"", "COPY", 9, 3, 2, (void *)NULL},
-    {"", "LOAD", 10, 2, 1, (void *)NULL},
-    {"", "STORE", 11, 2, 1, (void *)NULL},
-    {"", "INPUT", 12, 2, 1, (void *)NULL},
-    {"", "OUTPUT", 13, 2, 1, (void *)NULL},
-    {"", "STOP", 14, 1, 0, (void *)NULL},
-};
+InstructionNode *search_instruction_tmp(InstructionNode **instruction_arr, char *instruction_name)
+{
+  long unsigned arr_size = sizeof(instruction_arr) / sizeof(InstructionNode);
+  for (int i = 0; i < arr_size; i++)
+  {
+    if (str_compare(instruction_arr[i]->name, instruction_name))
+      return instruction_arr[i];
+  }
+  return NULL;
+}
 
-DirectiveNode directive_table[] = {
-    {"", "SPACE", 0, (void *)NULL},
-    {"", "CONST", 1, (void *)NULL},
-    {"", "EQU", 2, (void *)NULL},
-    {"", "IF", 1, (void *)NULL},
-    {"", "ORG", 1, (void *)NULL},
-    {"", "MACRO", -1, (void *)NULL},
-    {"", "ENDMACRO", 0, (void *)NULL},
-    {"", "BEGIN", 0, (void *)NULL},
-    {"", "END", 0, (void *)NULL},
-    {"", "PUBLIC", 1, (void *)NULL},
-    {"", "EXTERN", 1, (void *)NULL},
-    {"", "+", 2, (void *)NULL},
-    {"", "SECTION", 1, (void *)NULL},
-};
-*/
+DirectiveNode *search_directive_tmp(DirectiveNode **directive_arr, char *directive_name)
+{
+  long unsigned arr_size = sizeof(directive_arr) / sizeof(DirectiveNode);
+  for (int i = 0; i < arr_size; i++)
+  {
+    if (str_compare(directive_arr[i]->name, directive_name))
+      return directive_arr[i];
+  }
+  return NULL;
+}
+
+SymbolNode *search_symbol_tmp(SymbolNode **symbol_arr, int symbol_count, char *symbol_name)
+{
+  for (int i = 0; i < symbol_count; i++)
+  {
+    if (str_compare(symbol_arr[i]->name, symbol_name))
+      return symbol_arr[i];
+  }
+  return NULL;
+}
 
 /*
 tabelas de consulta

@@ -1,3 +1,5 @@
+#include "../include/token_array.h"
+
 typedef struct _instr_node
 {
   char *key, *name;
@@ -61,7 +63,7 @@ SymbolNode *search_symbol(HashTable *symbol_table, char *symbol_name);
 MacroNode *search_macro(HashTable *macro_table, char *macro_name);
 
 // definições para implementação por vetor, por garantia
-InstructionNode *search_instruction_tmp(HashTable *instruction_table, char *instruction_name);
-DirectiveNode *search_directive_tmp(HashTable *directive_table, char *directive_name);
-SymbolNode *search_symbol_tmp(HashTable *symbol_table, char *symbol_name);
-MacroNode *search_macro_tmp(HashTable *macro_table, char *macro_name);
+InstructionNode *search_instruction_tmp(InstructionNode **instruction_array, char *instruction_name);
+DirectiveNode *search_directive_tmp(DirectiveNode **directive_array, char *directive_name);
+SymbolNode *search_symbol_tmp(SymbolNode **symbol_array, int symbol_count, char *symbol_name);
+MacroNode *search_macro_tmp(MacroNode **macro_array, char *macro_name);
