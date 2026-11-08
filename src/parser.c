@@ -51,6 +51,87 @@ int get_token_type(char *token)
   return token_type;
 }
 
+static inline int token_is_reserved(InstructionNode *instruction_arr,
+                      DirectiveNode *directive_arr,
+                      char *token)
+{
+  return search_instruction_tmp(instruction_arr, token) ||
+         search_directive_tmp(directive_arr, token);
+}
+
+static inline int token_is_end_of_line(char *token)
+{
+  return str_compare(token, "\n");
+}
+
+int parse_directive(DirectiveNode **directive_arr,
+                    char **direc_ptr,
+                    DirectiveNode *direc)
+{
+}
+
+int parse_instruction(InstructionNode **instruction_arr,
+                      DirectiveNode **directive_arr,
+                      char **instr_ptr,
+                      InstructionNode *instr)
+{
+  // 1st token: label
+  char *token = *instr_ptr + 1;
+
+  if (token_is_end_of_line(token))
+  {
+    printf("Erro sintático: poucos argumentos para %s.\n", instr->name);
+    return 1;
+  }
+
+  if (get_token_type(token) != PARSE_SYMBOL)
+  {
+    // syntax error: invalid instruction argument
+    pritnf("Erro sintático: argumento inválido para %s.\n", instr->name);
+    return 1;
+  }
+
+  if (token_is_reserved(instruction_arr, directive_arr, token))
+  {
+    printf("Erro sintático: argumento de %s é palavra reservada %s.\n",
+           instr->name, token);
+    return 1;
+  }
+
+  // 2nd token?: macro
+  token++;
+
+  if (token_is_end_of_line(token))
+    return 0;
+
+  DirectiveNode *direc = search_directive_tmp(directive_arr, token);
+  if (!direc)
+  {
+    // syntax error: too few arguments
+    printf("Erro sintático: poucos argumentos para %s\n", instr->name);
+    return 1;
+  }
+  else
+  {
+    if (!str_compare(direc->name, "+"))
+    {
+      printf("Erro sintático: diretiva indevida %s após instrução %s.\n",
+             direc->name, instr->name);
+      return 1;
+    }
+
+    if (!parse_directive(directive_arr, &token, direc))
+      return 1;
+  }
+
+  {
+    // syntax error: too many arguments
+    printf("Erro sintático: muitos argumentos para instrução %s.\n",
+           instr->name);
+    return 1;
+  }
+}
+
 int parse_line(char **line_start,
                InstructionNode **instruction_arr,
                DirectiveNode **directive_arr,
