@@ -35,25 +35,39 @@ ligados.
 
 ## Linguagem *assembly* inventada
 
-A linguagem não é *case-sensitive*; os tokens devem ser separados por espaços;
-os comentários são iniciados com ponto e vírgula (";"). Abaixo há um exexmplo de
-código fonte.
+Algumas regras da linguagem:
+- A linguagem não é *case-sensitive*, todos caracteres são tratados como
+  maiúsculos;
+- Os tokens devem ser separados por espaços;
+- Só pode ter uma instrução ou diretiva por linha, de forma que **uma linha deve
+  ter uma instrução/diretiva e seus argumentos adequados para ser válida** (não
+  é aceita instrução/diretiva com argumentos em linhas diferentes);
+- Só pode ter um rótulo por linha;
+- Instruções apenas podem receber rótulos como argumento, não constantes
+  numéricas;
+- Os comentários são iniciados com ponto e vírgula (";"), desde que haja espaço
+  antes do comentário (`STOP; fim do programa` é um erro léxico).
+
 
 O programa deve ser dividido em seção de dados (`SECTION DATA`) e seção de
 programa (`SECTION TEXT`).
 
+Abaixo há um exexmplo de código fonte.
+
 ```
 SECTION DATA
-N1:     SPACE
-N2:     CONST -48
+N1:     SPACE         ; comentário 1
+N2:     CONST   -48
 N4:     SPACE
 
+; fim da seção de dados
+; iníncio da seção de programa
 SECTION TEXT
-ROT:    INPUT N1
-        COPY N1 N4 ;comentario
-        COPY N2 N3
-        COPY N3 N3
-        OUTPUT N3
+ROT:    INPUT   N1
+        COPY    N1 N4 ;comentário final
+        COPY    N2 N3
+        COPY    N3 N3
+        OUTPUT  N3
         STOP
 ```
 
