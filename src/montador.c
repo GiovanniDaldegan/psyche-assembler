@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "../src/utils.c"
+#include "../src/token_array.c"
 #include "../src/scanner.c"
 #include "../src/parser.c"
 #include "../src/generator.c"
