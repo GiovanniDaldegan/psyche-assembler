@@ -17,12 +17,12 @@ int get_token_type(char *token)
     switch (token_type)
     {
     case PARSE_NONE:
-      if (is_alpha_regular(token[i]) || is_underscore(token[i]))
+      if (char_is_alpha_regular(token[i]) || char_is_underscore(token[i]))
         token_type = PARSE_SYMBOL;
-      else if (is_digit(token[i]))
+      else if (char_is_digit(token[i]))
         token_type = PARSE_NUMBER;
       // erro doido: caractere inválido no parsing
-      else if (!is_valid(token[i]))
+      else if (!char_is_valid(token[i]))
       {
         printf("Erro sintático: erro doido, caractere inválido no parsing.\n");
         return -1;
@@ -31,7 +31,7 @@ int get_token_type(char *token)
 
     case PARSE_SYMBOL:
       // erro doido: caractere inválido no parsing
-      if (!is_valid(token[i]))
+      if (!char_is_valid(token[i]))
       {
         printf("Erro sintático: erro doido, caractere inválido no parsing.\n");
         return -1;
@@ -39,7 +39,7 @@ int get_token_type(char *token)
       break;
 
     case PARSE_NUMBER:
-      if (!is_valid(token[i]) || is_alpha_regular(token[i]))
+      if (!char_is_valid(token[i]) || char_is_alpha_regular(token[i]))
         return -1;
       break;
 
@@ -51,20 +51,20 @@ int get_token_type(char *token)
   return token_type;
 }
 
-static inline int token_is_reserved(InstructionNode *instruction_arr,
-                                    DirectiveNode *directive_arr,
-                                    char *token)
+int token_is_reserved(InstructionNode *instruction_arr,
+                      DirectiveNode *directive_arr,
+                      char *token)
 {
   return search_instruction_tmp(instruction_arr, token) ||
          search_directive_tmp(directive_arr, token);
 }
 
-static inline int token_is_end_of_line(char *token)
+int token_is_end_of_line(char *token)
 {
   return str_compare(token, "\n");
 }
 
-int parse_directive(DirectiveNode **directive_arr,
+int parse_directive(DirectiveNode *directive_arr,
                     char **direc_ptr,
                     DirectiveNode *direc)
 {
@@ -131,8 +131,8 @@ int parse_directive(DirectiveNode **directive_arr,
   return 0;
 }
 
-int parse_instruction(InstructionNode **instruction_arr,
-                      DirectiveNode **directive_arr,
+int parse_instruction(InstructionNode *instruction_arr,
+                      DirectiveNode *directive_arr,
                       char **instr_ptr,
                       InstructionNode *instr)
 {
@@ -148,7 +148,7 @@ int parse_instruction(InstructionNode **instruction_arr,
   if (get_token_type(token) != PARSE_SYMBOL)
   {
     // syntax error: invalid instruction argument
-    pritnf("Erro sintático: argumento inválido para %s.\n", instr->name);
+    printf("Erro sintático: argumento inválido para %s.\n", instr->name);
     return 1;
   }
 
@@ -194,8 +194,8 @@ int parse_instruction(InstructionNode **instruction_arr,
 }
 
 int parse_line(char **line_start,
-               InstructionNode **instruction_arr,
-               DirectiveNode **directive_arr,
+               InstructionNode *instruction_arr,
+               DirectiveNode *directive_arr,
                int token_count)
 {
 }
@@ -217,6 +217,7 @@ int parse_code()
       {"", "INPUT", 12, 2, 1, (void *)NULL},
       {"", "OUTPUT", 13, 2, 1, (void *)NULL},
       {"", "STOP", 14, 1, 0, (void *)NULL},
+      {"", "enf_of_array", 0, 0, 0, (void *)NULL},
   };
 
   DirectiveNode directive_arr[] = {
@@ -233,6 +234,7 @@ int parse_code()
       {"", "EXTERN", 1, (void *)NULL},
       {"", "+", 2, (void *)NULL},
       {"", "SECTION", 1, (void *)NULL},
+      {"", "enf_of_array", 0, (void *)NULL},
   };
 }
 

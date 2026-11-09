@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "utils.c"
+#include "hash_table.c"
 #include "token_array.c"
 #include "scanner.c"
-#include "hash_table.c"
 #include "parser.c"
 #include "generator.c"
 
