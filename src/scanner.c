@@ -60,6 +60,12 @@ void scan_line(char *line, TokenArray *token_arr, HashTable *symbol_table)
       return;
     }
 
+    if (str_compare(token, ":"))
+    {
+      printf("Erro sintático: símbolo %s não é válido.\n", token);
+      return;
+    }
+
     // store symbol
     if (token[strlen(token) - 1] == ':')
       token[strlen(token) - 1] = '\0';

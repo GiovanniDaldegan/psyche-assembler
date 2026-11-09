@@ -77,6 +77,9 @@ int parse_directive(DirectiveNode *directive_arr,
       return 0;
     else
     {
+      if (str_compare(direc->name, "SPACE"))
+        return 0;
+
       // syntax error: too few arguments
       printf("Erro sintático: poucos argumentos para diretiva %s\n",
              direc->name);
@@ -85,6 +88,7 @@ int parse_directive(DirectiveNode *directive_arr,
   }
 
   if (str_compare(direc->name, "CONST") ||
+      str_compare(direc->name, "SPACE") ||
       str_compare(direc->name, "EQU") ||
       str_compare(direc->name, "+"))
   {
@@ -221,7 +225,7 @@ int parse_code()
   };
 
   DirectiveNode directive_arr[] = {
-      {"", "SPACE", 0, (void *)NULL},
+      {"", "SPACE", 1, (void *)NULL},
       {"", "CONST", 1, (void *)NULL},
       {"", "EQU", 2, (void *)NULL},
       {"", "IF", 1, (void *)NULL},
