@@ -49,9 +49,20 @@ Algumas regras da linguagem:
   antes do comentário (`STOP; fim do programa` é um erro léxico);
 - Os únicos caracteres especiais válidos são: `_`, `+` e `:`.
 
-
 O programa deve ser dividido em seção de dados (`SECTION DATA`) e seção de
 programa (`SECTION TEXT`).
+
+Uma descrição simplificada da gramática da linguagem (`EOL` é *end-of-line*):
+
+```bnf
+<linha>                ::= <rótulo>: <comando> <EOL> | "SECTION" <seção>
+<comando>              ::= <instrução> <expressão> | <instrução> <rótulo> <rótulo> |
+                           <diretiva-alocação> | <diretiva-declarativa>
+<expressão>            ::= <rótulo> | <rótulo> "+" <constante>
+<diretiva-alocação>    ::= "CONST" <constante> | "SPACE" | "SPACE" <constante>
+<diretiva-declarativa> ::= <nome> "EQU" <constante> | "EXTERN" <rótulo> | "PUBLIC"
+<seção>                ::= "TEXT" | "DATA"
+```
 
 Abaixo há um exexmplo de código fonte.
 
@@ -78,20 +89,20 @@ linguagem estudada.
 ### Diretivas
 
 Legenda: \
-ARG[i]: i-ésimo argumento fornecido 
+**ARG[i]**: i-ésimo argumento fornecido 
 
-| Diretiva | Nº args    | Descrição                                                 |
-| -------- | ---------- | --------------------------------------------------------- |
-| SPACE    | 0          | reserva 1 palavra de valor indefinido "XX"                |
-| CONST    | 1          | reserva 1 palavra com o valor de ARG[1]                   |
-| EQU      | 2 (infixo) | define o símbolo ARG[1] como sinônimo para o valor ARG[2] |
-| IF       | 1          | caso ARG[1] == 0, ignora a linha seguinte na montagem     |
-| BEGIN    | 0          | inicia módulo                                             |
-| END      | 0          | termina módulo                                            |
-| PUBLIC   | 0          | indica símbolo definido no módulo                         |
-| EXTERN   | 1          | indica ARG[1] como símbolo definido em módulo externo     |
-| +        | 2 (infixo) | soma o valor de um símbolo (ARG[1]) a um número (ARG[2])  |
-| SECTION  | 1          | inicia seção de nome ARG[1] (TEXT ou DATA)                |
+| Diretiva | Nº args    | Descrição                                                     |
+| -------- | ---------- | ------------------------------------------------------------- |
+| SPACE    | 0 \| 1     | reserva 0 ou n palavras com valor 0                           |
+| CONST    | 1          | reserva 1 palavra com o valor de ARG[1]                       |
+| EQU      | 2 (infixo) | define o símbolo ARG[1] como sinônimo para a constante ARG[2] |
+| IF       | 1          | caso ARG[1] == 0, ignora a linha seguinte na montagem         |
+| BEGIN    | 0          | inicia módulo                                                 |
+| END      | 0          | termina módulo                                                |
+| PUBLIC   | 0          | indica símbolo definido no módulo                             |
+| EXTERN   | 1          | indica ARG[1] como símbolo definido em módulo externo         |
+| +        | 2 (infixo) | soma o valor de um símbolo (ARG[1]) a um número (ARG[2])      |
+| SECTION  | 1          | inicia seção de nome ARG[1] (TEXT ou DATA)                    |
 
 > [!note]
 > A diretiva EQU deve ser utilizada apenas antes das seções TEXT e DATA. \
@@ -102,8 +113,8 @@ ARG[i]: i-ésimo argumento fornecido
 ### Instruções
 
 O projeto do processador conta com 2 registradores:
-- ACC: acumulador, utilizado para todas operações
-- PC: contador de programa, indica a próxima instrução para ser executada
+- **ACC**: acumulador, utilizado para todas operações
+- **PC**: contador de programa, indica a próxima instrução para ser executada
 
 Legenda:\
 **mem(PTR)**: valor guardado em memória no endereço PTR \
