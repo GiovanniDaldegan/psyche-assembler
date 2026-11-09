@@ -1,10 +1,11 @@
 #include <stdlib.h>
-#include "../include/hash_tables.h"
+#include "../include/hash_table.h"
 #include "../include/utils.h"
 #include "../include/token_array.h"
 
 #define HASH_TABLE_INCREMENT 20
 
+/* 
 void set_node_instruction(
     InstructionNode *node,
     char *key,
@@ -48,6 +49,7 @@ void init_hash_table_directive(HashTable *table, int capacity)
 
   table->table = (void **)malloc(sizeof(DirectiveNode) * table->capacity);
 }
+*/
 
 InstructionNode *search_instruction_tmp(InstructionNode **instruction_arr, char *instruction_name)
 {

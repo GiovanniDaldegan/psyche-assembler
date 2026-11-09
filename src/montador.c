@@ -1,9 +1,10 @@
 #include <stdio.h>
-#include "../src/utils.c"
-#include "../src/token_array.c"
-#include "../src/scanner.c"
-#include "../src/parser.c"
-#include "../src/generator.c"
+#include "utils.c"
+#include "token_array.c"
+#include "scanner.c"
+#include "hash_table.c"
+#include "parser.c"
+#include "generator.c"
 
 // argv: [0] source, [1] target obj
 int main(int argc, char *argv[])

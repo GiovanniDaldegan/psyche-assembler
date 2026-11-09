@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "../include/parser.h"
 #include "../include/utils.h"
-#include "../include/hash_tables.h"
+#include "../include/hash_table.h"
 
 int get_token_type(char *token)
 {

@@ -1,4 +1,4 @@
-#include "../include/hash_tables.h"
+#include "../include/hash_table.h"
 
 // macro não pode ser recursiva; definição de macro deve preceder uso
 MacroNode *define_macro(char *macro);

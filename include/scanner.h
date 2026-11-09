@@ -1,4 +1,4 @@
-#include "../include/hash_tables.h"
+#include "../include/hash_table.h"
 #include "../include/token_array.h"
 
 enum ScannerStringState

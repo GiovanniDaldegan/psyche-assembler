@@ -40,6 +40,7 @@ typedef struct _hash_table
   void **table;
 } HashTable;
 
+/*
 int instruction_hash_function(HashTable *table, char *key);
 
 void init_hash_table_instruction(HashTable *instruction_table, int capacity);
@@ -61,6 +62,7 @@ InstructionNode *search_instruction(HashTable *instruction_table, char *instruct
 DirectiveNode *search_directive(HashTable *directive_table, char *directive_name);
 SymbolNode *search_symbol(HashTable *symbol_table, char *symbol_name);
 MacroNode *search_macro(HashTable *macro_table, char *macro_name);
+*/
 
 // definições para implementação por vetor, por garantia
 InstructionNode *search_instruction_tmp(InstructionNode **instruction_array, char *instruction_name);
