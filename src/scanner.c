@@ -5,6 +5,7 @@
 #include "../include/scanner.h"
 #include "../include/utils.h"
 #include "../include/token_array.h"
+#include "../include/symbol_array.h"
 #include "../include/error_types.h"
 
 int token_is_valid(char *token)
@@ -27,7 +28,7 @@ int token_is_symbol(char *token)
   return 1;
 }
 
-void scan_line(char *line, TokenArray *token_arr, HashTable *symbol_table)
+void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr)
 {
   for (
       char *token = strtok(line, " ");
@@ -77,12 +78,12 @@ void scan_line(char *line, TokenArray *token_arr, HashTable *symbol_table)
              token);
     }
 
-    token_array_insert(token_arr, token);
+    insert_token(token_arr, token);
   }
-  token_array_insert(token_arr, "\n");
+  insert_token(token_arr, "\n");
 }
 
-void scan_file(char *i_filename, TokenArray *token_arr, HashTable *symbol_table)
+void scan_file(char *i_filename, TokenArray *token_arr, SymbolArray *symbol_arr)
 {
   FILE *i_file = fopen(i_filename, "r");
   // check input file errors
@@ -98,7 +99,7 @@ void scan_file(char *i_filename, TokenArray *token_arr, HashTable *symbol_table)
 
   while ((read = getline(&line, &len, i_file)) != EOF)
   {
-    scan_line(line, token_arr, symbol_table);
+    scan_line(line, token_arr, symbol_arr);
   }
 
   fclose(i_file);

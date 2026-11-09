@@ -5,6 +5,6 @@ typedef struct _token_array
   char **array;
 } TokenArray;
 
-TokenArray *init_array_token(int capacity);
-void token_array_resize(TokenArray *token_array, int increment);
-void token_array_insert(TokenArray *token_array, char *token);
+TokenArray *init_token_array(int capacity);
+void resize_token_array(TokenArray *token_array, int increment);
+void insert_token(TokenArray *token_array, char *token);

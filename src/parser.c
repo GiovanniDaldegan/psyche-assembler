@@ -204,41 +204,8 @@ int parse_line(char **line_start,
 {
 }
 
-int parse_code()
+int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr,
+               InstructionNode *instr_arr, DirectiveNode *direc_arr)
 {
-  InstructionNode instruction_arr[] = {
-      {"", "ADD", 1, 2, 1, (void *)NULL},
-      {"", "SUB", 2, 2, 1, (void *)NULL},
-      {"", "MUL", 3, 2, 1, (void *)NULL},
-      {"", "DIV", 4, 2, 1, (void *)NULL},
-      {"", "JMP", 5, 2, 1, (void *)NULL},
-      {"", "JMPN", 6, 2, 1, (void *)NULL},
-      {"", "JMPP", 7, 2, 1, (void *)NULL},
-      {"", "JMPZ", 8, 2, 1, (void *)NULL},
-      {"", "COPY", 9, 3, 2, (void *)NULL},
-      {"", "LOAD", 10, 2, 1, (void *)NULL},
-      {"", "STORE", 11, 2, 1, (void *)NULL},
-      {"", "INPUT", 12, 2, 1, (void *)NULL},
-      {"", "OUTPUT", 13, 2, 1, (void *)NULL},
-      {"", "STOP", 14, 1, 0, (void *)NULL},
-      {"", "enf_of_array", 0, 0, 0, (void *)NULL},
-  };
-
-  DirectiveNode directive_arr[] = {
-      {"", "SPACE", 1, (void *)NULL},
-      {"", "CONST", 1, (void *)NULL},
-      {"", "EQU", 2, (void *)NULL},
-      {"", "IF", 1, (void *)NULL},
-      {"", "ORG", 1, (void *)NULL},
-      {"", "MACRO", -1, (void *)NULL},
-      {"", "ENDMACRO", 0, (void *)NULL},
-      {"", "BEGIN", 0, (void *)NULL},
-      {"", "END", 0, (void *)NULL},
-      {"", "PUBLIC", 1, (void *)NULL},
-      {"", "EXTERN", 1, (void *)NULL},
-      {"", "+", 2, (void *)NULL},
-      {"", "SECTION", 1, (void *)NULL},
-      {"", "enf_of_array", 0, (void *)NULL},
-  };
 }
 

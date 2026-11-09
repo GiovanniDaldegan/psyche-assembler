@@ -14,12 +14,14 @@ typedef struct _direc_node
   struct _direc_node *next;
 } DirectiveNode;
 
+/*
 typedef struct _symb_node
 {
   char *key, *name;
   int addr, is_relative, *pendencies;
   struct _symb_node *next;
 } SymbolNode;
+*/
 
 typedef struct _ext_symb_node
 {
@@ -65,7 +67,8 @@ MacroNode *search_macro(HashTable *macro_table, char *macro_name);
 */
 
 // definições para implementação por vetor, por garantia
-InstructionNode *search_instruction_tmp(InstructionNode **instruction_array, char *instruction_name);
-DirectiveNode *search_directive_tmp(DirectiveNode **directive_array, char *directive_name);
-SymbolNode *search_symbol_tmp(SymbolNode **symbol_array, int symbol_count, char *symbol_name);
-MacroNode *search_macro_tmp(MacroNode **macro_array, char *macro_name);
+InstructionNode *search_instruction_tmp(InstructionNode *instruction_array, char *instruction_name);
+DirectiveNode *search_directive_tmp(DirectiveNode *directive_array, char *directive_name);
+
+// SymbolNode *search_symbol_tmp(SymbolNode *symbol_array, char *symbol_name);
+// MacroNode *search_macro_tmp(MacroNode *macro_array, char *macro_name);

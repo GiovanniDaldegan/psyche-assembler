@@ -5,7 +5,7 @@
 
 #define HASH_TABLE_INCREMENT 20
 
-/* 
+/*
 void set_node_instruction(
     InstructionNode *node,
     char *key,
@@ -51,37 +51,39 @@ void init_hash_table_directive(HashTable *table, int capacity)
 }
 */
 
-InstructionNode *search_instruction_tmp(InstructionNode **instruction_arr, char *instruction_name)
+InstructionNode *search_instruction_tmp(InstructionNode *instruction_array,
+                                        char *instruction_name)
 {
-  long unsigned arr_size = sizeof(instruction_arr) / sizeof(InstructionNode);
-  for (int i = 0; i < arr_size; i++)
+  for (int i = 0; !str_compare(instruction_array[i].name, "EOA"); i++)
   {
-    if (str_compare(instruction_arr[i]->name, instruction_name))
-      return instruction_arr[i];
+    if (str_compare(instruction_array[i].name, instruction_name))
+      return &instruction_array[i];
   }
   return NULL;
 }
 
-DirectiveNode *search_directive_tmp(DirectiveNode **directive_arr, char *directive_name)
+DirectiveNode *search_directive_tmp(DirectiveNode *directive_array,
+                                    char *directive_name)
 {
-  long unsigned arr_size = sizeof(directive_arr) / sizeof(DirectiveNode);
-  for (int i = 0; i < arr_size; i++)
+  for (int i = 0; !str_compare(directive_array[i].name, "EOA"); i++)
   {
-    if (str_compare(directive_arr[i]->name, directive_name))
-      return directive_arr[i];
+    if (str_compare(directive_array[i].name, directive_name))
+      return &directive_array[i];
   }
   return NULL;
 }
 
-SymbolNode *search_symbol_tmp(SymbolNode **symbol_arr, int symbol_count, char *symbol_name)
+/*
+SymbolNode *search_symbol_tmp(SymbolArray *symbol_arr, char *symbol_token)
 {
-  for (int i = 0; i < symbol_count; i++)
+  for (int i = 0; i < symbol_arr->back; i++)
   {
-    if (str_compare(symbol_arr[i]->name, symbol_name))
-      return symbol_arr[i];
+    if (str_compare(symbol_arr->array[i]->token, symbol_token))
+      return symbol_arr->array[i];
   }
   return NULL;
 }
+*/
 
 /*
 tabelas de consulta

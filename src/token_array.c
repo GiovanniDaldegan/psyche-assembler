@@ -2,7 +2,7 @@
 
 #define TOKEN_ARRAY_INCREMENT 100
 
-TokenArray *init_array_token(int capacity)
+TokenArray *init_token_array(int capacity)
 {
   TokenArray *token_arr = (TokenArray *)malloc(sizeof(TokenArray));
 
@@ -13,7 +13,7 @@ TokenArray *init_array_token(int capacity)
   return token_arr;
 }
 
-void token_array_resize(TokenArray *token_arr, int increment)
+void resize_token_array(TokenArray *token_arr, int increment)
 {
   token_arr->capacity += increment;
   char **new_array = (char **)malloc(sizeof(char **) * token_arr->capacity);
@@ -25,15 +25,15 @@ void token_array_resize(TokenArray *token_arr, int increment)
   token_arr->array = new_array;
 }
 
-void token_array_insert(TokenArray *token_arr, char *token)
+void insert_token(TokenArray *token_arr, char *token)
 {
   if (token_arr->back > token_arr->capacity)
   {
-    printf("Token array deu overflow!\n");
+    printf("Vetor de tokens deu overflow!\n");
     return;
   }
   else if (token_arr->back == token_arr->capacity)
-    token_array_resize(token_arr, TOKEN_ARRAY_INCREMENT);
+    resize_token_array(token_arr, TOKEN_ARRAY_INCREMENT);
 
   token_arr->array[token_arr->back++] = init_string(token);
 }
