@@ -3,6 +3,7 @@
 #include "../include/parser.h"
 #include "../include/utils.h"
 #include "../include/hash_table.h"
+#include "../include/error_types.h"
 
 int get_token_type(char *token)
 {
@@ -25,7 +26,7 @@ int get_token_type(char *token)
       else if (!char_is_valid(token[i]))
       {
         printf("Erro sintático: erro doido, caractere inválido no parsing.\n");
-        return -1;
+        return SYNTAX_UNDEFINED_ERROR;
       }
       break;
 
@@ -34,13 +35,16 @@ int get_token_type(char *token)
       if (!char_is_valid(token[i]))
       {
         printf("Erro sintático: erro doido, caractere inválido no parsing.\n");
-        return -1;
+        return SYNTAX_UNDEFINED_ERROR;
       }
       break;
 
     case PARSE_NUMBER:
-      if (!char_is_valid(token[i]) || char_is_alpha_regular(token[i]))
-        return -1;
+      if (!char_is_valid(token[i]) || !char_is_digit(token[i]))
+      {
+        printf("Erro sintático: erro doido, número inválido no parsing.\n");
+        return SYNTAX_UNDEFINED_ERROR;
+      }
       break;
 
     default:
@@ -56,7 +60,8 @@ int token_is_reserved(InstructionNode *instruction_arr,
                       char *token)
 {
   return search_instruction_tmp(instruction_arr, token) ||
-         search_directive_tmp(directive_arr, token);
+         search_directive_tmp(directive_arr, token) ||
+         token == "TEXT" || token == "DATA";
 }
 
 int token_is_end_of_line(char *token)
@@ -77,13 +82,14 @@ int parse_directive(DirectiveNode *directive_arr,
       return 0;
     else
     {
+      // space can be used with no arg
       if (str_compare(direc->name, "SPACE"))
         return 0;
 
       // syntax error: too few arguments
       printf("Erro sintático: poucos argumentos para diretiva %s\n",
              direc->name);
-      return 1;
+      return DIRECTIVE_FEW_ARGS;
     }
   }
 
@@ -96,7 +102,7 @@ int parse_directive(DirectiveNode *directive_arr,
     {
       printf("Erro sintático: argumento %s inválido para diretiva %s.\n",
              token, direc->name);
-      return 1;
+      return DIRECTIVE_INVALID_ARG;
     }
   }
 
@@ -107,7 +113,7 @@ int parse_directive(DirectiveNode *directive_arr,
     {
       printf("Erro sintático: argumento %s inválido para diretiva %s.\n",
              token, direc->name);
-      return 1;
+      return DIRECTIVE_INVALID_ARG;
     }
   }
 
@@ -118,7 +124,7 @@ int parse_directive(DirectiveNode *directive_arr,
     {
       printf("Erro sintático: argumento %s inválido para diretiva %s.\n",
              token, direc->name);
-      return 1;
+      return DIRECTIVE_INVALID_ARG;
     }
   }
 
@@ -129,7 +135,7 @@ int parse_directive(DirectiveNode *directive_arr,
     // syntax error: too few arguments
     printf("Erro sintático: muitos argumentos para diretiva %s\n",
            direc->name);
-    return 1;
+    return DIRECTIVE_MANY_ARGS;
   }
 
   return 0;
@@ -145,22 +151,27 @@ int parse_instruction(InstructionNode *instruction_arr,
 
   if (token_is_end_of_line(token))
   {
-    printf("Erro sintático: poucos argumentos para %s.\n", instr->name);
-    return 1;
+    if (instr->num_params != 0)
+    {
+      printf("Erro sintático: poucos argumentos para instrução %s.\n",
+             instr->name);
+      return INSTRUCTION_FEW_ARGS;
+    }
+    return 0;
   }
 
   if (get_token_type(token) != PARSE_SYMBOL)
   {
     // syntax error: invalid instruction argument
     printf("Erro sintático: argumento inválido para %s.\n", instr->name);
-    return 1;
+    return INSTRUCTION_INVALID_ARG;
   }
 
   if (token_is_reserved(instruction_arr, directive_arr, token))
   {
     printf("Erro sintático: argumento de %s é palavra reservada %s.\n",
            instr->name, token);
-    return 1;
+    return INSTRUCTION_INVALID_ARG;
   }
 
   // 2nd token?: macro
@@ -174,7 +185,7 @@ int parse_instruction(InstructionNode *instruction_arr,
   {
     // syntax error: too few arguments
     printf("Erro sintático: poucos argumentos para %s\n", instr->name);
-    return 1;
+    return INSTRUCTION_INVALID_ARG;
   }
   else
   {
@@ -182,19 +193,19 @@ int parse_instruction(InstructionNode *instruction_arr,
     {
       printf("Erro sintático: diretiva indevida %s após instrução %s.\n",
              direc->name, instr->name);
-      return 1;
+      return INSTRUCTION_INVALID_ARG;
     }
 
-    if (!parse_directive(directive_arr, &token, direc))
-      return 1;
+    return parse_directive(token_ptr, direc);
   }
-
+  /*
   {
     // syntax error: too many arguments
     printf("Erro sintático: muitos argumentos para instrução %s.\n",
            instr->name);
     return 1;
   }
+  */
 }
 
 int parse_line(char **line_start,
@@ -217,13 +228,12 @@ int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr,
     {
       if (token_line_count != 0)
       {
-        // parse_line(line_start, token_line_count, instr_arr, direc_arr);
+        int err =
+            parse_line(line_start, token_line_count, instr_arr, direc_arr);
 
-        for (int j = 0; j < token_line_count; j++)
-        {
-          printf("%s|", line_start[j]);
-        }
-        printf("   ");
+        // stop parsing
+        // if (err != 0)
+        //   return err;
       }
       token_line_count = 0;
       line_start = &token_arr->array[i + 1];

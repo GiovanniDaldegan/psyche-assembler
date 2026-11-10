@@ -76,9 +76,8 @@ programa (`SECTION TEXT`).
 Uma descrição simplificada da gramática da linguagem (`EOL` é *end-of-line*):
 
 ```bnf
-<linha>                ::= <rótulo>: <comando> <EOL> | "SECTION" <seção>
-<comando>              ::= <instrução> <expressão> | <instrução> <rótulo> <rótulo> |
-                           <diretiva-alocação> | <diretiva-declarativa>
+<linha>                ::= <rótulo>":" <comando> <EOL> | "SECTION" <seção>
+<comando>              ::= <instrução> <expressão> | "COPY" <expressão> <expressão> | <diretiva-alocação> | <diretiva-declarativa>
 <expressão>            ::= <rótulo> | <rótulo> "+" <constante>
 <diretiva-alocação>    ::= "CONST" <constante> | "SPACE" | "SPACE" <constante>
 <diretiva-declarativa> ::= <nome> "EQU" <constante> | "EXTERN" <rótulo> | "PUBLIC"
@@ -87,7 +86,7 @@ Uma descrição simplificada da gramática da linguagem (`EOL` é *end-of-line*)
 
 Abaixo há um exexmplo de código fonte.
 
-```
+```asm
 SECTION DATA
 N1:     SPACE         ; comentário 1
 N2:     CONST   -48
@@ -103,6 +102,9 @@ ROT:    INPUT   N1
         OUTPUT  N3
         STOP
 ```
+
+> [!warning]
+> Atenção, **"TEXT" e "DATA" são palavras reservadas**, não são símbolos/rótulos aceitos.
 
 A seguir, são apresentadas as diretivas implementadas e as instruções da
 linguagem estudada.
