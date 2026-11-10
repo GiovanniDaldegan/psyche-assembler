@@ -3,6 +3,27 @@ Projeto de Software Básico, UnB 2026/2.
 
 Desenvolvido por Giovanni Daldegan, 232002520.
 
+## Utilização
+
+Para compilar o projeto, vá para o diretório raiz e execute:
+
+```sh
+gcc src/montador.c -o montador
+gcc src/ligador.c -o ligador
+```
+
+Ainda na raiz, para montar um código fonte:
+
+```sh
+./montador <código-fonte>.asm
+```
+
+E para ligar (fonte pode ser de tipo `.asm` ou `.obj`):
+
+```sh
+./ligador <fonte1> <fonte2> <fonte3>
+```
+
 ## Montador
 
 O programa "montador" implementa um montador simplificado para a linguagem
