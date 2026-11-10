@@ -126,7 +126,7 @@ Legenda:\
 | --------- | ------ | ------- | ------- | ---------------------------------- |
 | ADD       | 1      | 2       | 1       | ACC <- ACC + mem(ARG[1])           |
 | SUB       | 2      | 2       | 1       | ACC <- ACC - mem(ARG[1])           |
-| MUL       | 3      | 2       | 1       | ACC <- ACC * mem(ARG[1])           |
+| MULT      | 3      | 2       | 1       | ACC <- ACC * mem(ARG[1])           |
 | DIV       | 4      | 2       | 1       | ACC <- ACC / mem(ARG[1]) (inteira) |
 | JMP       | 5      | 2       | 1       | PC <- ARG[1]                       |
 | JMPN      | 6      | 2       | 1       | PC <- ARG[1] se ACC < 0            |

@@ -114,9 +114,10 @@ void print_string_array(char **arr, int n_elements)
 {
   for (int i = 0; i < n_elements; i++)
   {
-    i != n_elements - 1
-        ? printf("%s, ", arr[i])
-        : printf("%s\n", arr[i]);
+    if (!str_compare(arr[i], "\n"))
+      i < n_elements - 1
+          ? printf("%s, ", arr[i])
+          : printf("%s\n", arr[i]);
   }
 }
 

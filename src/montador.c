@@ -2,6 +2,7 @@
 #include "utils.c"
 #include "hash_table.c"
 #include "token_array.c"
+#include "symbol_array.c"
 #include "scanner.c"
 #include "parser.c"
 #include "generator.c"
@@ -11,14 +12,16 @@ int main(int argc, char *argv[])
 {
   if (argc == 2 && str_compare(argv[1], "-h"))
   {
-    printf("usage: montador <código-fonte>.asm\n\nCódigo fonte deve ser de tipo"
-           ".asm.\nProduz arquivo de texto de tipo .obj com código montado.\n");
+    printf("usage: montador <código-fonte>.asm [-d]\n\n"
+           "Arquivo fonte deve ser de tipo .asm.\nProduz arquivo de texto de "
+           "tipo .obj com código montado.\n"
+           "Flag \"-d\" ativa modo de debug.\n");
     return 0;
   }
-  else if (argc != 2)
+  else if (argc < 2 || argc > 3)
   {
-    printf("ERRO: argumentos inválidos. Use 'montador -h' para saber"
-           "mais sobre o uso.\n");
+    printf("ERRO: argumentos inválidos. Execute 'montador -h' para saber mais "
+           "sobre o uso.\n");
     return 1;
   }
 
@@ -29,19 +32,18 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  TokenArray *token_arr = init_token_array(100);
-  SymbolArray *symbol_arr;
-  // init_hash_table_symbol(symbol_arr, HASH_TABLE_INCREMENT);
+  int debug = 0;
+  if (argc == 3 && str_compare(argv[2], "-d"))
+    debug = 1;
 
-  scan_file(argv[1], token_arr, symbol_arr);
-
-  // print_string_array(token_arr->array, token_arr->back);
+  TokenArray *token_arr = init_token_array(300);
+  SymbolArray *symbol_arr = init_symbol_array(300);
 
   // init instr, direct
   InstructionNode instruction_array[] = {
       {"", "ADD", 1, 2, 1, (void *)NULL},
       {"", "SUB", 2, 2, 1, (void *)NULL},
-      {"", "MUL", 3, 2, 1, (void *)NULL},
+      {"", "MULT", 3, 2, 1, (void *)NULL},
       {"", "DIV", 4, 2, 1, (void *)NULL},
       {"", "JMP", 5, 2, 1, (void *)NULL},
       {"", "JMPN", 6, 2, 1, (void *)NULL},
@@ -72,6 +74,20 @@ int main(int argc, char *argv[])
       {"", "SECTION", 1, (void *)NULL},
       {"", "EOA", 0, (void *)NULL},
   };
+
+  scan_file(argv[1], token_arr, symbol_arr, instruction_array, directive_array);
+  // debug scanning
+  if (debug)
+  {
+    printf("Tokens válidos detectados pelo scanner:\n");
+    print_string_array(token_arr->array, token_arr->back);
+    printf("\n\n");
+
+    printf("Símbolos registrados pelo scanner:\n");
+    for (int i = 0; i < symbol_arr->back; i++)
+      printf("%s, ", symbol_arr->array[i]->token);
+    printf("\n\n");
+  }
 
   parse_code(token_arr, symbol_arr, (InstructionNode *)instruction_array, (DirectiveNode *)directive_array);
 
