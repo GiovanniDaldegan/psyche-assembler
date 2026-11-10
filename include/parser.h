@@ -22,5 +22,5 @@ int token_is_end_of_line(char *token);
 int parse_directive(DirectiveNode *directive_array, char **directive_ptr, DirectiveNode *directive);
 int parse_instruction(InstructionNode *instruction_array, DirectiveNode *directive_array, char **instruction_ptr, InstructionNode *instruction);
 
-int parse_line(char **line_start, InstructionNode *instruction_array, DirectiveNode *directive_array, int token_count);
+int parse_line(char **line_start, int token_count, InstructionNode *instruction_array, DirectiveNode *directive_array);
 int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr, InstructionNode *instr_arr, DirectiveNode *direc_arr);

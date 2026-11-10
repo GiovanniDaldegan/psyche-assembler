@@ -198,14 +198,37 @@ int parse_instruction(InstructionNode *instruction_arr,
 }
 
 int parse_line(char **line_start,
+               int token_count,
                InstructionNode *instruction_arr,
-               DirectiveNode *directive_arr,
-               int token_count)
+               DirectiveNode *directive_arr)
 {
 }
 
 int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr,
                InstructionNode *instr_arr, DirectiveNode *direc_arr)
 {
+  int token_line_count = 0;
+  char **line_start = token_arr->array;
+  for (int i = 0; i < token_arr->back; i++)
+  {
+    if (!str_compare(token_arr->array[i], "\n"))
+      token_line_count++;
+    else
+    {
+      if (token_line_count != 0)
+      {
+        // parse_line(line_start, token_line_count, instr_arr, direc_arr);
+
+        for (int j = 0; j < token_line_count; j++)
+        {
+          printf("%s|", line_start[j]);
+        }
+        printf("   ");
+      }
+      token_line_count = 0;
+      line_start = &token_arr->array[i + 1];
+    }
+  }
+  printf("\n");
 }
 
