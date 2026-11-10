@@ -13,5 +13,5 @@ enum ScannerStringState
 
 int token_is_valid(char *token);
 
-void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_table);
-void scan_file(char *i_filename, TokenArray *token_arr, SymbolArray *symbol_table);
+void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_table, InstructionNode *instr_array, DirectiveNode * directive_array);
+void scan_file(char *i_filename, TokenArray *token_arr, SymbolArray *symbol_table, InstructionNode *instr_array, DirectiveNode * directive_array);

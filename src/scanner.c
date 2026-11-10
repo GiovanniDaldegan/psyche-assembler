@@ -48,7 +48,8 @@ int token_is_operand(char *token)
   return 0;
 }
 
-void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr)
+void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr,
+               InstructionNode *instr_arr, DirectiveNode *direc_arr)
 {
   for (
       char *token = strtok(line, " ");
@@ -91,8 +92,10 @@ void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr)
     }
     else if (token_is_symbol(token))
     {
-      // Symbol *symbol = init_symbol(token, -1, 0);
-      // insert_symbol(symbol_arr, symbol);
+      if (!search_symbol(symbol_arr, token) &&
+          !search_instruction_tmp(instr_arr, token) &&
+          !search_directive_tmp(direc_arr, token))
+        insert_symbol(symbol_arr, token);
     }
 
     insert_token(token_arr, token);
@@ -100,7 +103,8 @@ void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr)
   insert_token(token_arr, "\n");
 }
 
-void scan_file(char *i_filename, TokenArray *token_arr, SymbolArray *symbol_arr)
+void scan_file(char *i_filename, TokenArray *token_arr, SymbolArray *symbol_arr,
+               InstructionNode *instr_arr, DirectiveNode *direc_arr)
 {
   FILE *i_file = fopen(i_filename, "r");
   // check input file errors
@@ -116,7 +120,7 @@ void scan_file(char *i_filename, TokenArray *token_arr, SymbolArray *symbol_arr)
 
   while ((read = getline(&line, &len, i_file)) != EOF)
   {
-    scan_line(line, token_arr, symbol_arr);
+    scan_line(line, token_arr, symbol_arr, instr_arr, direc_arr);
   }
 
   fclose(i_file);

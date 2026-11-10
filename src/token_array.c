@@ -1,6 +1,6 @@
 #include "../include/token_array.h"
 
-#define TOKEN_ARRAY_INCREMENT 100
+#define TOKEN_ARRAY_INCREMENT 300
 
 TokenArray *init_token_array(int capacity)
 {
