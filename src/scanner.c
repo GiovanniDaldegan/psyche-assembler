@@ -94,7 +94,8 @@ void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr,
     {
       if (!search_symbol(symbol_arr, token) &&
           !search_instruction_tmp(instr_arr, token) &&
-          !search_directive_tmp(direc_arr, token))
+          !search_directive_tmp(direc_arr, token) &&
+          !str_compare(token, "TEXT") && !str_compare(token, "DATA"))
         insert_symbol(symbol_arr, token);
     }
 

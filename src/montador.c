@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   char *ext = get_filename_extention(argv[1]);
   if (!str_compare(ext, ".asm"))
   {
-    printf("ERRO: arquivo com extensão inválida!\n");
+    printf("ERRO: tipo de arquivo inválido!\n");
     return 1;
   }
 
