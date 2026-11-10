@@ -20,12 +20,32 @@ int token_is_valid(char *token)
 
 int token_is_symbol(char *token)
 {
-  for (int i = 0; token[i] != '\0'; i++)
+  if (!char_is_alpha_regular(token[0]) && !char_is_underscore(token[0]))
+    return 0;
+
+  for (int i = 1; token[i] != '\0'; i++)
   {
     if (!char_is_symbol_valid(token[i]))
       return 0;
   }
   return 1;
+}
+
+int token_is_number(char *token)
+{
+  for (int i = 0; token[i] != '\0'; i++)
+  {
+    if (!char_is_digit(token[i]))
+      return 0;
+  }
+  return 1;
+}
+
+int token_is_operand(char *token)
+{
+  if (str_compare(token, "+"))
+    return 1;
+  return 0;
 }
 
 void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr)
@@ -51,19 +71,9 @@ void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr)
       // INVALID_CHAR;
     }
 
-    // error invalid token start
-    if (strlen(token) > 1 &&
-        !char_is_alpha_regular(token[0]) &&
-        !char_is_underscore(token[0]))
-    {
-      printf("Erro léxico: símbolo \"%s\" contém caractere inicial inválido.\n",
-             token);
-      return;
-    }
-
     if (str_compare(token, ":"))
     {
-      printf("Erro sintático: símbolo %s não é válido.\n", token);
+      printf("Erro sintático: símbolo \"%s\" não é válido sem rótulo.\n", token);
       return;
     }
 
@@ -71,11 +81,18 @@ void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr)
     if (token[strlen(token) - 1] == ':')
       token[strlen(token) - 1] = '\0';
 
-    if (!token_is_symbol(token))
+    // error invalid token start
+    if (!token_is_operand(token) &&
+        !token_is_number(token) &&
+        !token_is_symbol(token))
     {
-      // error invalid expression
-      printf("Erro léxico: expressão \"%s\" não tem separação de espaços.\n",
-             token);
+      printf("Erro léxico: símbolo \"%s\" é inválido.\n", token);
+      return;
+    }
+    else if (token_is_symbol(token))
+    {
+      // Symbol *symbol = init_symbol(token, -1, 0);
+      // insert_symbol(symbol_arr, symbol);
     }
 
     insert_token(token_arr, token);
