@@ -48,8 +48,8 @@ int token_is_operand(char *token)
   return 0;
 }
 
-void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr,
-               InstructionNode *instr_arr, DirectiveNode *direc_arr)
+int scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr,
+              InstructionNode *instr_arr, DirectiveNode *direc_arr)
 {
   for (
       char *token = strtok(line, " ");
@@ -68,14 +68,13 @@ void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr,
     if (!token_is_valid(token))
     {
       printf("Erro léxico: token \"%s\" contém caractere inváido.\n", token);
-      return;
-      // INVALID_CHAR;
+      return INVALID_CHAR;
     }
 
     if (str_compare(token, ":"))
     {
-      printf("Erro sintático: símbolo \"%s\" não é válido sem rótulo.\n", token);
-      return;
+      printf("Erro léxico: símbolo \"%s\" não é válido sem rótulo.\n", token);
+      return INVALID_DECLARATION;
     }
 
     // store symbol
@@ -88,7 +87,7 @@ void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr,
         !token_is_symbol(token))
     {
       printf("Erro léxico: símbolo \"%s\" é inválido.\n", token);
-      return;
+      return INVALID_SYMBOL;
     }
     else if (token_is_symbol(token))
     {
@@ -102,27 +101,39 @@ void scan_line(char *line, TokenArray *token_arr, SymbolArray *symbol_arr,
     insert_token(token_arr, token);
   }
   insert_token(token_arr, "\n");
+
+  return 0;
 }
 
-void scan_file(char *i_filename, TokenArray *token_arr, SymbolArray *symbol_arr,
-               InstructionNode *instr_arr, DirectiveNode *direc_arr)
+int scan_file(char *i_filename, TokenArray *token_arr, SymbolArray *symbol_arr,
+              InstructionNode *instr_arr, DirectiveNode *direc_arr)
 {
   FILE *i_file = fopen(i_filename, "r");
   // check input file errors
   if (i_file == NULL)
   {
     printf("Erro: arquivo fonte inexistente.\n");
-    return;
+    return FILE_ERROR;
   }
 
+  int err = 0;
   char *line = NULL;
   size_t len = 0;
   size_t read;
+  int line_count = 0;
 
   while ((read = getline(&line, &len, i_file)) != EOF)
   {
-    scan_line(line, token_arr, symbol_arr, instr_arr, direc_arr);
-  }
+    line_count++;
+    err = scan_line(line, token_arr, symbol_arr, instr_arr, direc_arr);
 
+    if (err != 0)
+    {
+      printf("Linha %d.\n", line_count);
+      return err;
+    }
+  }
   fclose(i_file);
+
+  return err;
 }

@@ -36,6 +36,8 @@ int main(int argc, char *argv[])
   if (argc == 3 && str_compare(argv[2], "-d"))
     debug = 1;
 
+  int err = 0;
+
   TokenArray *token_arr = init_token_array(300);
   SymbolArray *symbol_arr = init_symbol_array(300);
 
@@ -75,7 +77,14 @@ int main(int argc, char *argv[])
       {"", "EOA", 0, (void *)NULL},
   };
 
-  scan_file(argv[1], token_arr, symbol_arr, instruction_array, directive_array);
+  err = scan_file(argv[1], token_arr, symbol_arr, instruction_array, directive_array);
+  
+  if (err != 0)
+  {
+    printf("\nFalha no scanning. A montagem foi abortada.\n");
+    return 1;
+  }
+  
   // debug scanning
   if (debug)
   {
