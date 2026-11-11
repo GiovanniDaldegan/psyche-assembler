@@ -1,4 +1,4 @@
-#include "../include/hash_table.h"
+#include "hash_table.h"
 
 typedef struct _prog
 {

@@ -18,6 +18,7 @@ char *trim_r(char *str);
 char *str_trim(char *str);
 
 int str_compare(char *str1, char *str2);
+int str_is_end_of_line(char *token);
 char *get_filename_extention(char *filename);
 
 void print_string_array(char **arr, int n_elements);

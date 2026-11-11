@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../include/utils.h"
-#include "../include/error_types.h"
-#include "../include/token_array.h"
-#include "../include/symbol_array.h"
-#include "../include/hash_table.h"
+#include "utils.h"
+#include "error_types.h"
+#include "token_array.h"
+#include "symbol_array.h"
+#include "hash_table.h"
 
 enum ScannerStringState
 {

@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../include/utils.h"
-#include "../include/error_types.h"
-#include "../include/hash_table.h"
-#include "../include/symbol_array.h"
+#include "utils.h"
+#include "error_types.h"
+#include "hash_table.h"
+#include "symbol_array.h"
 
 enum ParserStringState
 {
@@ -23,10 +23,9 @@ enum Line
 
 int get_token_type(char *token);
 int token_is_reserved(InstructionNode *instruction_array, DirectiveNode *directive_array, char *token);
-int token_is_end_of_line(char *token);
 
 int parse_directive(InstructionNode *instruction_array, DirectiveNode *directive_array, char ***directive_ptr, DirectiveNode *directive, int debug_flag);
-
+int parse_expression(InstructionNode *instruction_arr, DirectiveNode *directive_arr, char ***expr_ptr, int debug_flag);
 int parse_instruction(InstructionNode *instruction_array, DirectiveNode *directive_array, char **instruction_ptr, InstructionNode *instruction, int debug_flag);
 
 int parse_line(char **line_start, int token_count, InstructionNode *instruction_array, DirectiveNode *directive_array, int debug_flag);

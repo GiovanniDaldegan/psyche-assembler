@@ -83,7 +83,8 @@ int main(int argc, char *argv[])
            ">> ETAPA DE SCANNING <<\n"
            "=======================\n\n");
 
-  err = scan_file(argv[1], token_arr, symbol_arr, instruction_array, directive_array);
+  err = scan_file(argv[1], token_arr, symbol_arr,
+                  instruction_array, directive_array);
 
   if (err != 0)
   {
@@ -111,7 +112,8 @@ int main(int argc, char *argv[])
            "======================\n\n");
   }
 
-  err = parse_code(token_arr, symbol_arr, (InstructionNode *)instruction_array, (DirectiveNode *)directive_array, debug_flag);
+  err = parse_code(token_arr, symbol_arr, (InstructionNode *)instruction_array,
+                   (DirectiveNode *)directive_array, debug_flag);
 
   if (err != 0)
   {

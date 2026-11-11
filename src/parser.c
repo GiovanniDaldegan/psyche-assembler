@@ -59,11 +59,6 @@ int token_is_reserved(InstructionNode *instruction_arr,
          token == "TEXT" || token == "DATA";
 }
 
-int token_is_end_of_line(char *token)
-{
-  return str_compare(token, "\n");
-}
-
 int parse_directive(InstructionNode *instruction_arr,
                     DirectiveNode *directive_arr,
                     char ***direc_ptr,
@@ -77,7 +72,7 @@ int parse_directive(InstructionNode *instruction_arr,
   (*direc_ptr)++;
   char *token = **direc_ptr;
 
-  if (token_is_end_of_line(token))
+  if (str_is_end_of_line(token))
   {
     if (direc->num_params == 0)
     {
@@ -209,7 +204,7 @@ int parse_expression(InstructionNode *instruction_arr,
   // 1st token: label
   char *token_ptr = **expr_ptr;
 
-  if (token_is_end_of_line(token_ptr))
+  if (str_is_end_of_line(token_ptr))
   {
     if (debug_flag)
       printf(".\n");
@@ -233,7 +228,7 @@ int parse_expression(InstructionNode *instruction_arr,
   (*expr_ptr)++;
   token_ptr = **expr_ptr;
 
-  if (token_is_end_of_line(token_ptr) || token_is_symbol(token_ptr))
+  if (str_is_end_of_line(token_ptr) || token_is_symbol(token_ptr))
   {
     if (debug_flag)
       printf(")");
@@ -250,7 +245,8 @@ int parse_expression(InstructionNode *instruction_arr,
     return EXPRESSION_INVALID;
   }
 
-  int err = parse_directive(instruction_arr, directive_arr, expr_ptr, direc, debug_flag);
+  int err = parse_directive(instruction_arr, directive_arr,
+                            expr_ptr, direc, debug_flag);
 
   if (debug_flag && err == 0)
     printf(")");
@@ -271,7 +267,7 @@ int parse_instruction(InstructionNode *instruction_arr,
   // 1st token: expression
   char **token_ptr = instr_ptr + 1;
 
-  if (token_is_end_of_line(*token_ptr))
+  if (str_is_end_of_line(*token_ptr))
   {
     if (instr->num_params != 0)
     {
@@ -323,13 +319,14 @@ int parse_instruction(InstructionNode *instruction_arr,
   }
 
   // 1st expr
-  int err = parse_expression(instruction_arr, directive_arr, &token_ptr, debug_flag);
+  int err = parse_expression(instruction_arr, directive_arr,
+                             &token_ptr, debug_flag);
   if (err != 0)
     return err;
 
   // token after 1st expr: \n, expression
 
-  if (token_is_end_of_line(*token_ptr))
+  if (str_is_end_of_line(*token_ptr))
   {
     if (instr->num_params != 1)
     {
@@ -381,13 +378,14 @@ int parse_instruction(InstructionNode *instruction_arr,
     }
 
     // 2nd expr
-    int err = parse_expression(instruction_arr, directive_arr, &token_ptr, debug_flag);
+    int err = parse_expression(instruction_arr, directive_arr,
+                               &token_ptr, debug_flag);
     if (err != 0)
       return err;
 
     // token after 2nd expr: \n
 
-    if (token_is_end_of_line(*token_ptr))
+    if (str_is_end_of_line(*token_ptr))
     {
       if (debug_flag)
         printf(")");
@@ -471,7 +469,7 @@ int parse_line(char **line_start,
     // 2nd token: instruction, directive
     token_ptr++;
 
-    if (token_is_end_of_line(*token_ptr))
+    if (str_is_end_of_line(*token_ptr))
     {
       printf("Erro sintático: rótulo \"%s\" sem instrução ou diretiva.\n",
              *(token_ptr - 1));
@@ -481,14 +479,16 @@ int parse_line(char **line_start,
 
   InstructionNode *instr = search_instruction_tmp(instruction_arr, *token_ptr);
   if (instr)
-    return parse_instruction(instruction_arr, directive_arr, token_ptr, instr, debug_flag);
+    return parse_instruction(instruction_arr, directive_arr,
+                             token_ptr, instr, debug_flag);
 
   DirectiveNode *direc = search_directive_tmp(directive_arr, *token_ptr);
   if (direc)
   {
-    err = parse_directive(instruction_arr, directive_arr, &token_ptr, direc, debug_flag);
+    err = parse_directive(instruction_arr, directive_arr,
+                          &token_ptr, direc, debug_flag);
 
-    if (!token_is_end_of_line(*token_ptr) && token_count > (token_ptr - line_start))
+    if (!str_is_end_of_line(*token_ptr) && token_count > (token_ptr - line_start))
     {
       if (debug_flag)
         printf("\n");
@@ -523,7 +523,8 @@ int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr,
       if (token_line_count != 0)
       {
         int err =
-            parse_line(line_start, token_line_count, instr_arr, direc_arr, debug_flag);
+            parse_line(line_start, token_line_count, instr_arr, direc_arr,
+                       debug_flag);
 
         if (debug_flag)
           printf("\n");

@@ -1,7 +1,4 @@
-#include <string.h>
-#include "../include/text_types.h"
-#include <stdlib.h>
-#include <stdio.h>
+#include "../include/utils.h"
 
 int char_is_ignored(char chr)
 {
@@ -109,6 +106,8 @@ int str_compare(char *str1, char *str2)
 
   return 1;
 }
+
+int str_is_end_of_line(char *token) { return str_compare(token, "\n"); }
 
 void print_string_array(char **arr, int n_elements)
 {
