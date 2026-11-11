@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "../include/utils.h"
+#include "../include/error_types.h"
 #include "../include/hash_table.h"
 #include "../include/symbol_array.h"
 

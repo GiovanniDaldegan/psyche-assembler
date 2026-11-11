@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include "../include/symbol_array.h"
 
 #define SYMBOL_INITIAL_CAPACITY 300

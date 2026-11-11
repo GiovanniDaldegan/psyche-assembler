@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "../include/parser.h"
-#include "../include/utils.h"
-#include "../include/hash_table.h"
-#include "../include/error_types.h"
 
 int get_token_type(char *token)
 {

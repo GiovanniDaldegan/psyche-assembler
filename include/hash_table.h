@@ -1,3 +1,6 @@
+#include <stdlib.h>
+
+#include "../include/utils.h"
 #include "../include/token_array.h"
 
 typedef struct _instr_node

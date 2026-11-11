@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 typedef struct _token_array
 {
   int capacity;

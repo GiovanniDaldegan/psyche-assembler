@@ -1,7 +1,4 @@
-#include <stdlib.h>
 #include "../include/hash_table.h"
-#include "../include/utils.h"
-#include "../include/token_array.h"
 
 #define HASH_TABLE_INCREMENT 20
 

@@ -1,12 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "../include/scanner.h"
-#include "../include/utils.h"
-#include "../include/token_array.h"
-#include "../include/symbol_array.h"
-#include "../include/error_types.h"
 
 int token_is_valid(char *token)
 {
