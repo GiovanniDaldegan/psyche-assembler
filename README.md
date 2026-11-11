@@ -15,13 +15,23 @@ gcc src/ligador.c -o ligador
 Ainda na raiz, para montar um código fonte:
 
 ```sh
-./montador <código-fonte>.asm
+./montador [codigo_fonte.asm]
 ```
 
 E para ligar (fonte pode ser de tipo `.asm` ou `.obj`):
 
 ```sh
-./ligador <fonte1> <fonte2> <fonte3>
+./ligador [fonte1] [fonte2] [fonte3]
+```
+
+Para verificar o histórico de commits, garanta que tem o git instalado e execute um dos seguintes comandos no diretório raiz:
+
+```sh
+# histórico no terminal
+git log
+
+# histórico com UI do gitk
+gitk
 ```
 
 ## Montador
@@ -76,12 +86,12 @@ programa (`SECTION TEXT`).
 Uma descrição simplificada da gramática da linguagem (`EOL` é *end-of-line*):
 
 ```bnf
-<linha>                ::= <rótulo>":" <comando> <EOL> | "SECTION" <seção>
+<linha>                ::= <rótulo>":" <comando> <EOL> | "SECTION" <seção> <EOL>
+<seção>                ::= "TEXT" | "DATA"
 <comando>              ::= <instrução> <expressão> | "COPY" <expressão> <expressão> | <diretiva-alocação> | <diretiva-declarativa>
 <expressão>            ::= <rótulo> | <rótulo> "+" <constante>
 <diretiva-alocação>    ::= "CONST" <constante> | "SPACE" | "SPACE" <constante>
 <diretiva-declarativa> ::= <nome> "EQU" <constante> | "EXTERN" <rótulo> | "PUBLIC"
-<seção>                ::= "TEXT" | "DATA"
 ```
 
 Abaixo há um exexmplo de código fonte.
@@ -122,8 +132,8 @@ Legenda: \
 | IF       | 1          | caso ARG[1] == 0, ignora a linha seguinte na montagem         |
 | BEGIN    | 0          | inicia módulo                                                 |
 | END      | 0          | termina módulo                                                |
-| PUBLIC   | 0          | indica símbolo definido no módulo                             |
-| EXTERN   | 1          | indica ARG[1] como símbolo definido em módulo externo         |
+| PUBLIC   | 1          | indica símbolo definido no módulo                             |
+| EXTERN   | 0          | indica ARG[1] como símbolo definido em módulo externo         |
 | +        | 2 (infixo) | soma o valor de um símbolo (ARG[1]) a um número (ARG[2])      |
 | SECTION  | 1          | inicia seção de nome ARG[1] (TEXT ou DATA)                    |
 

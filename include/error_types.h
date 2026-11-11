@@ -7,6 +7,7 @@ typedef struct _err
 
 enum ErrorType
 {
+  _1,
   LEXIC_ERROR,
   SYNTAX_ERROR,
   SEMANTIC_ERROR,
@@ -14,17 +15,24 @@ enum ErrorType
 
 enum LexicError
 {
-  INVALID_CHAR,  // caractere inválido
-  INVALID_LABEL, // nome inválido de rótulo
+  _2,
+  INVALID_CHAR,   // caractere inválido
+  INVALID_SYMBOL, // nome inválido de rótulo
+
+  INVALID_DECLARATION, // declaração inválida de rótulo
+
+  FILE_ERROR,
 };
 
 enum SyntaxError
 {
+  _3,
   INVALID_LINE, // linha invalidamente iniciada
 
   EXPRESSION_INVALID, // espressão inválida
 
   OPCODE_UNDEFINED,        // opcode inválido
+  INSTRUCTION_FAIL,        // falha de parsing da instrução
   INSTRUCTION_FEW_ARGS,    // número inferior ao esperado para instrução
   INSTRUCTION_MANY_ARGS,   // número superior ao esperado para instrução
   INSTRUCTION_INVALID_ARG, // número superior ao esperado para instrução
@@ -45,6 +53,7 @@ enum SyntaxError
 
 enum SemanticError
 {
+  _4,
   LABEL_UNDEFINED, // rótulo não definido
   LABEL_REDEFINED, // definição repetida de rótulo
   MACRO_UNDEFINED, // macro não definida

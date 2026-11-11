@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
   DirectiveNode directive_array[] = {
       {"", "SPACE", 1, (void *)NULL},
       {"", "CONST", 1, (void *)NULL},
-      {"", "EQU", 2, (void *)NULL},
+      {"", "EQU", 1, (void *)NULL},
       {"", "IF", 1, (void *)NULL},
       {"", "ORG", 1, (void *)NULL},
       {"", "MACRO", -1, (void *)NULL},
@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
       {"", "BEGIN", 0, (void *)NULL},
       {"", "END", 0, (void *)NULL},
       {"", "PUBLIC", 1, (void *)NULL},
-      {"", "EXTERN", 1, (void *)NULL},
-      {"", "+", 2, (void *)NULL},
+      {"", "EXTERN", 0, (void *)NULL},
+      {"", "+", 1, (void *)NULL},
       {"", "SECTION", 1, (void *)NULL},
       {"", "EOA", 0, (void *)NULL},
   };
