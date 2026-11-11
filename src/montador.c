@@ -98,7 +98,13 @@ int main(int argc, char *argv[])
     printf("\n\n");
   }
 
-  parse_code(token_arr, symbol_arr, (InstructionNode *)instruction_array, (DirectiveNode *)directive_array);
+  err = parse_code(token_arr, symbol_arr, (InstructionNode *)instruction_array, (DirectiveNode *)directive_array, debug_flag);
+
+  if (err != 0)
+  {
+    printf("\nParsing falhou. A montagem foi abortada.\n");
+    return 1;
+  }
 
   return 0;
 }
