@@ -32,9 +32,9 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  int debug = 0;
+  int debug_flag = 0;
   if (argc == 3 && str_compare(argv[2], "-d"))
-    debug = 1;
+    debug_flag = 1;
 
   int err = 0;
 
@@ -77,6 +77,11 @@ int main(int argc, char *argv[])
       {"", "EOA", 0, (void *)NULL},
   };
 
+  if (debug_flag)
+    printf("=======================\n"
+           ">> ETAPA DE SCANNING <<\n"
+           "=======================\n\n");
+
   err = scan_file(argv[1], token_arr, symbol_arr, instruction_array, directive_array);
   
   if (err != 0)
@@ -86,7 +91,7 @@ int main(int argc, char *argv[])
   }
   
   // debug scanning
-  if (debug)
+  if (debug_flag)
   {
     printf("Tokens válidos detectados pelo scanner:\n");
     print_string_array(token_arr->array, token_arr->back);
@@ -95,7 +100,14 @@ int main(int argc, char *argv[])
     printf("Símbolos registrados pelo scanner:\n");
     for (int i = 0; i < symbol_arr->back; i++)
       printf("%s, ", symbol_arr->array[i]->token);
-    printf("\n\n");
+
+    printf("\n\nFim do scanning. Pressione Enter.");
+    getchar();
+    printf("\n");
+
+    printf("======================\n"
+           ">> ETAPA DE PARSING <<\n"
+           "======================\n\n");
   }
 
   err = parse_code(token_arr, symbol_arr, (InstructionNode *)instruction_array, (DirectiveNode *)directive_array, debug_flag);
@@ -104,6 +116,13 @@ int main(int argc, char *argv[])
   {
     printf("\nParsing falhou. A montagem foi abortada.\n");
     return 1;
+  }
+
+  if (debug_flag)
+  {
+    printf("\n\nFim do parsing. Pressione Enter.");
+    getchar();
+    printf("\n\n");
   }
 
   return 0;
