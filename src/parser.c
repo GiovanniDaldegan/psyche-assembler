@@ -450,9 +450,6 @@ int parse_line(char **line_start,
                DirectiveNode *directive_arr,
                int debug_flag)
 {
-  if (debug_flag)
-    printf("linha: ");
-
   int err = 0;
   char **token_ptr = line_start;
 
@@ -548,4 +545,3 @@ int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr,
   }
   // printf("\n");
 }
-

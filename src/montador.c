@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 
   TokenArray *token_arr = init_token_array(300);
   SymbolArray *symbol_arr = init_symbol_array(300);
+  SynonymArray *synonym_arr = init_synonym_array(20);
 
   // init instr, direct
   InstructionNode instruction_array[] = {
@@ -83,13 +84,13 @@ int main(int argc, char *argv[])
            "=======================\n\n");
 
   err = scan_file(argv[1], token_arr, symbol_arr, instruction_array, directive_array);
-  
+
   if (err != 0)
   {
     printf("\nFalha no scanning. A montagem foi abortada.\n");
     return 1;
   }
-  
+
   // debug scanning
   if (debug_flag)
   {

@@ -2,17 +2,29 @@
 #include "../include/symbol_array.h"
 
 #define SYMBOL_INITIAL_CAPACITY 300
+#define SYNONYM_INITIAL_CAPACITY 20
 
 Symbol *init_symbol(char *token, int value, int defined)
 {
   Symbol *symb = (Symbol *)malloc(sizeof(Symbol));
 
-  symb->token = (char*) malloc(sizeof(char) * (strlen(token) + 1));
+  symb->token = (char *)malloc(sizeof(char) * (strlen(token) + 1));
   strcpy(symb->token, token);
   symb->value = value;
   symb->defined = defined;
 
   return symb;
+}
+
+Synonym *init_synonym(char *token, int value)
+{
+  Synonym *syn = (Synonym *)malloc(sizeof(Synonym));
+
+  syn->token = (char *)malloc(sizeof(char) * (strlen(token) + 1));
+  strcpy(syn->token, token);
+  syn->value = value;
+
+  return syn;
 }
 
 SymbolArray *init_symbol_array(int capacity)
@@ -59,6 +71,55 @@ Symbol *search_symbol(SymbolArray *symbol_arr, char *token)
   {
     if (str_compare(symbol_arr->array[i]->token, token))
       return symbol_arr->array[i];
+  }
+  return NULL;
+}
+
+SynonymArray *init_synonym_array(int capacity)
+{
+  SynonymArray *symbol_arr = (SynonymArray *)malloc(sizeof(SynonymArray));
+
+  capacity = SYNONYM_INITIAL_CAPACITY;
+  symbol_arr->capacity = capacity;
+  symbol_arr->back = 0;
+  symbol_arr->array = (Synonym **)malloc(sizeof(Synonym *) * capacity);
+
+  return symbol_arr;
+}
+
+void resize_synonym_array(SynonymArray *synonym_array, int increment)
+{
+  increment = SYNONYM_INITIAL_CAPACITY;
+  synonym_array->capacity += increment;
+  Synonym **new_array = (Synonym **)malloc(sizeof(Synonym *) * synonym_array->capacity);
+
+  for (int i = 0; i < synonym_array->back; i++)
+    new_array[i] = synonym_array->array[i];
+
+  free(synonym_array->array);
+  synonym_array->array = new_array;
+}
+
+void insert_synonym(SynonymArray *synonym_array, char *token, int value)
+{
+  if (synonym_array->back > synonym_array->capacity)
+  {
+    printf("Vetor de símbolos deu overflow!\n");
+    return;
+  }
+  else if (synonym_array->back == synonym_array->capacity)
+    resize_synonym_array(synonym_array, SYNONYM_INITIAL_CAPACITY);
+
+  synonym_array->array[synonym_array->back++] =
+      init_synonym(token, value);
+}
+
+Synonym *search_synonym(SynonymArray *synonym_array, char *token)
+{
+  for (int i = 0; i < synonym_array->back; i++)
+  {
+    if (str_compare(synonym_array->array[i]->token, token))
+      return synonym_array->array[i];
   }
   return NULL;
 }
