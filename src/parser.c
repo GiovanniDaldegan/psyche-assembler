@@ -148,13 +148,16 @@ int parse_directive(InstructionNode *instruction_arr,
   else if (str_compare(direc->name, "PUBLIC") ||
            str_compare(direc->name, "SECTION"))
   {
-    if (!str_compare(*(*direc_ptr + 1), "DATA") ||
-        !str_compare(*(*direc_ptr + 1), "TEXT"))
+    if (str_compare(direc->name, "SECTION") &&
+        !str_compare(**direc_ptr, "DATA") &&
+        !str_compare(**direc_ptr, "TEXT"))
     {
       if (debug_flag)
         printf(">\n\n");
 
-      printf("Erro sintático: nome de seção deve ser \"TEXT\" ou \"DATA\".\n");
+      printf("Erro sintático: nome de seção deve ser \"TEXT\" ou \"DATA\", "
+             "\"%s\" é inválido.\n",
+             **direc_ptr);
       return DIRECTIVE_INVALID_ARG;
     }
     else if (get_token_type(token) != PARSE_SYMBOL)
