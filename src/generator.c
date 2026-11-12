@@ -56,7 +56,6 @@ char *concat_sections(char *sec_text, char *sec_data)
 }
 
 int inital_pass(TokenArray *token_arr,
-                SymbolArray *symbol_array,
                 SynonymArray *synonym_arr,
                 SymbolArray *def_table,
                 SymbolArray *use_table,
@@ -212,14 +211,8 @@ int inital_pass(TokenArray *token_arr,
 
     else if (str_compare(*token_ptr, "PUBLIC"))
     {
-      Symbol *symb = search_symbol(symbol_array, *(token_ptr + 1));
-      if (symb)
-        insert_symbol_ready(def_table, symb);
-
-      else
-        printf("Erro na geração: símbolo \"%s\" não definido!\n", *(token_ptr + 1));
-
       token_ptr++;
+      insert_symbol(def_table, *token_ptr);
 
       // skips next \n
       empty_line = 1;
@@ -227,12 +220,7 @@ int inital_pass(TokenArray *token_arr,
 
     else if (str_compare(*(token_ptr + 1), "EXTERN"))
     {
-      Symbol *symb = search_symbol(symbol_array, *(token_ptr));
-      if (symb)
-        insert_symbol_ready(use_table, symb);
-      else
-        printf("Erro na geração: símbolo \"%s\" não definido!\n", *(token_ptr));
-
+      insert_symbol(use_table, *(token_ptr));
       token_ptr += 2;
     }
 
@@ -258,7 +246,6 @@ int inital_pass(TokenArray *token_arr,
         insert_in_section(curr_sec_tok_arr, *token_ptr);
     }
   }
-
   /*
   printf("\nseção texto:\n");
   for (int i = 0; i < text_arr->back; i++)
@@ -273,11 +260,20 @@ int inital_pass(TokenArray *token_arr,
   */
 }
 
-int first_pass(TokenArray *token_arr,
-               InstructionNode *instruction_arr)
+int first_pass(InstructionNode *instruction_arr,
+               TokenArray *text_arr,
+               TokenArray *data_arr)
 {
-  for (char **token_ptr = token_arr->array;
-       (token_ptr - token_arr->array) < token_arr->back;
+  int token_count = 0;
+
+  for (char **token_ptr = text_arr->array;
+       (token_ptr - text_arr->array) < text_arr->back;
+       token_ptr++)
+  {
+  }
+
+  for (char **token_ptr = text_arr->array;
+       (token_ptr - text_arr->array) < text_arr->back;
        token_ptr++)
   {
   }
@@ -307,8 +303,7 @@ int two_pass(TokenArray *token_arr,
   SymbolArray *def_table = init_symbol_array(300);
   SymbolArray *use_table = init_symbol_array(300);
 
-  inital_pass(token_arr, sybmol_arr, synonym_arr,
-              def_table, use_table, text_arr, data_arr);
+  inital_pass(token_arr, synonym_arr, def_table, use_table, text_arr, data_arr);
   /*
     printf("DEF TABLE\n");
     for (int i = 0; i < def_table->back; i++)
