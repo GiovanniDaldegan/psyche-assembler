@@ -125,6 +125,10 @@ int scan_file(char *i_filename, TokenArray *token_arr, SymbolArray *symbol_arr,
       return err;
     }
   }
+
+  // assures the end of token_arr is "\n"
+  insert_token(token_arr, "\n");
+  
   fclose(i_file);
 
   return err;

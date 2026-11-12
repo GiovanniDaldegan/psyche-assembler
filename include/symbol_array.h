@@ -27,13 +27,15 @@ typedef struct _syn_arr
 } SynonymArray;
 
 Symbol *init_symbol(char *token, int value, int defined);
+void update_symbol(Symbol *symbol, int value, int defined);
 Synonym *init_synonym(char *token, int value);
 
 SymbolArray *init_symbol_array(int capacity);
 void resize_symbol_array(SymbolArray *symbol_array, int increment);
 void insert_symbol(SymbolArray *symbol_array, char *token);
-void update_symbol(SymbolArray *symbol_array, char *token, int value, int defined);
+Symbol *search_symbol(SymbolArray *symbol_array, char *token);
 
 SynonymArray *init_synonym_array(int capacity);
 void resize_synonym_array(SynonymArray *synonym_array, int increment);
 void insert_synonym(SynonymArray *synonym_array, char *token, int value);
+Synonym *search_synonym(SynonymArray *synonym_array, char *token);

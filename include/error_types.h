@@ -5,17 +5,19 @@ typedef struct _err
   char *err_msg;
 } Error;
 
+/*
 enum ErrorType
 {
-  _1,
+  OK,
   LEXIC_ERROR,
   SYNTAX_ERROR,
   SEMANTIC_ERROR,
 };
+*/
 
 enum LexicError
 {
-  _2,
+  LEXIC_OK,
   INVALID_CHAR,   // caractere inválido
   INVALID_SYMBOL, // nome inválido de rótulo
 
@@ -26,7 +28,7 @@ enum LexicError
 
 enum SyntaxError
 {
-  _3,
+  SYNTAX_OK,
   INVALID_LINE, // linha invalidamente iniciada
 
   EXPRESSION_INVALID, // espressão inválida
@@ -53,11 +55,20 @@ enum SyntaxError
 
 enum SemanticError
 {
-  _4,
-  LABEL_UNDEFINED, // rótulo não definido
-  LABEL_REDEFINED, // definição repetida de rótulo
+  SEMANTIC_OK,
+
+  LABEL_UNDEFINED,   // rótulo não definido
+  LABEL_REDEFINED,   // definição repetida de rótulo
+  LABEL_OUT_SECTION, // definição de rótulo fora de seção
+  LABEL_IS_SYNONYM,  // rótulo também é definido como sinônimo numérico com EQU
+
   MACRO_UNDEFINED, // macro não definida
   MACRO_REDEFINED, // definição repetida de macro
+
+  SYNONYM_IN_SECTION, // sinônimo definido em seção
+  SYNONYM_REDEFINED, // sinônimo definido em seção
+
+  MISSING_TEXT, // seção de texto ausente
 
   SEMANTIC_UNDEFINED_ERROR // erro indefinido
 };

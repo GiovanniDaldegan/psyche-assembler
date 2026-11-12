@@ -5,6 +5,7 @@
 #include "symbol_array.c"
 #include "scanner.c"
 #include "parser.c"
+#include "semantic_analyzer.c"
 #include "generator.c"
 
 // argv: [0] source, [1] target obj
@@ -123,10 +124,16 @@ int main(int argc, char *argv[])
 
   if (debug_flag)
   {
-    printf("\n\nFim do parsing. Pressione Enter.");
+    printf("\nFim do parsing. Pressione Enter.");
     getchar();
     printf("\n\n");
+
+    printf("================================\n"
+           ">> ETAPA DE ANÁLISE SEMÂNTICA <<\n"
+           "================================\n\n");
   }
+
+  semantic_analysis(token_arr, symbol_arr, synonym_arr);
 
   return 0;
 }

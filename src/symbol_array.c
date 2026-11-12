@@ -15,6 +15,12 @@ Symbol *init_symbol(char *token, int value, int defined)
   return symb;
 }
 
+void update_symbol(Symbol *symb, int value, int defined)
+{
+  symb->value = value;
+  symb->defined = defined;
+}
+
 Synonym *init_synonym(char *token, int value)
 {
   Synonym *syn = (Synonym *)malloc(sizeof(Synonym));
@@ -62,6 +68,19 @@ void insert_symbol(SymbolArray *symbol_arr, char *token)
     resize_symbol_array(symbol_arr, SYMBOL_INITIAL_CAPACITY);
 
   symbol_arr->array[symbol_arr->back++] = init_symbol(token, -1, 0);
+}
+
+void insert_symbol_ready(SymbolArray *symbol_arr, Symbol *symb)
+{
+  if (symbol_arr->back > symbol_arr->capacity)
+  {
+    printf("Vetor de símbolos deu overflow!\n");
+    return;
+  }
+  else if (symbol_arr->back == symbol_arr->capacity)
+    resize_symbol_array(symbol_arr, SYMBOL_INITIAL_CAPACITY);
+
+  symbol_arr->array[symbol_arr->back++] = symb;
 }
 
 Symbol *search_symbol(SymbolArray *symbol_arr, char *token)
