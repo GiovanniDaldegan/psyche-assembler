@@ -61,6 +61,7 @@ int token_is_reserved(InstructionNode *instruction_arr,
 
 int parse_directive(InstructionNode *instruction_arr,
                     DirectiveNode *directive_arr,
+                    SynonymArray *synonym_arr,
                     char ***direc_ptr,
                     DirectiveNode *direc,
                     int debug_flag)
@@ -123,10 +124,7 @@ int parse_directive(InstructionNode *instruction_arr,
   }
 
   // numeric arg
-  if (str_compare(direc->name, "CONST") ||
-      str_compare(direc->name, "SPACE") ||
-      str_compare(direc->name, "EQU") ||
-      str_compare(direc->name, "+"))
+  if (str_compare(direc->name, "EQU"))
   {
     if (get_token_type(token) != PARSE_NUMBER)
     {
@@ -139,6 +137,8 @@ int parse_directive(InstructionNode *instruction_arr,
     }
     if (debug_flag)
       printf(")");
+
+    insert_synonym(synonym_arr, *(*direc_ptr - 2), 0);
 
     (*direc_ptr)++;
     return 0;
@@ -164,6 +164,7 @@ int parse_directive(InstructionNode *instruction_arr,
     return 0;
   }
 
+  // both symbol or numeric arg
   else if (str_compare(direc->name, "IF"))
   {
     int type = get_token_type(token);
@@ -183,6 +184,25 @@ int parse_directive(InstructionNode *instruction_arr,
     return 0;
   }
 
+  // numeric arg or accepts synonym arg (with EQU)
+  else if (str_compare(direc->name, "CONST") ||
+           str_compare(direc->name, "SPACE") ||
+           str_compare(direc->name, "+"))
+  {
+    if (get_token_type(token) != PARSE_NUMBER &&
+        !search_synonym(synonym_arr, token))
+    {
+      printf("Erro sintático: argumento \"%s\" não foi declarado como constante"
+             " numérica antes de referência, portanto é inválido para diretiva "
+             "%s.\n",
+             token, direc->name);
+      return DIRECTIVE_INVALID_ARG;
+    }
+
+    (*direc_ptr)++;
+    return 0;
+  }
+
   if (debug_flag)
     printf(">\n\n");
   printf("Erro sintático: diretiva %s não definida.\n", direc->name);
@@ -195,6 +215,7 @@ int parse_directive(InstructionNode *instruction_arr,
  */
 int parse_expression(InstructionNode *instruction_arr,
                      DirectiveNode *directive_arr,
+                     SynonymArray *synonym_arr,
                      char ***expr_ptr,
                      int debug_flag)
 {
@@ -245,7 +266,7 @@ int parse_expression(InstructionNode *instruction_arr,
     return EXPRESSION_INVALID;
   }
 
-  int err = parse_directive(instruction_arr, directive_arr,
+  int err = parse_directive(instruction_arr, directive_arr, synonym_arr,
                             expr_ptr, direc, debug_flag);
 
   if (debug_flag && err == 0)
@@ -257,6 +278,7 @@ int parse_expression(InstructionNode *instruction_arr,
 // NOTE: doesn't increment `instr_ptr`
 int parse_instruction(InstructionNode *instruction_arr,
                       DirectiveNode *directive_arr,
+                      SynonymArray *synonym_arr,
                       char **instr_ptr,
                       InstructionNode *instr,
                       int debug_flag)
@@ -319,7 +341,7 @@ int parse_instruction(InstructionNode *instruction_arr,
   }
 
   // 1st expr
-  int err = parse_expression(instruction_arr, directive_arr,
+  int err = parse_expression(instruction_arr, directive_arr, synonym_arr,
                              &token_ptr, debug_flag);
   if (err != 0)
     return err;
@@ -378,8 +400,8 @@ int parse_instruction(InstructionNode *instruction_arr,
     }
 
     // 2nd expr
-    int err = parse_expression(instruction_arr, directive_arr,
-                               &token_ptr, debug_flag);
+    err = parse_expression(instruction_arr, directive_arr, synonym_arr,
+                           &token_ptr, debug_flag);
     if (err != 0)
       return err;
 
@@ -400,7 +422,7 @@ int parse_instruction(InstructionNode *instruction_arr,
     return INSTRUCTION_FEW_ARGS;
   }
 
-  printf("Erro sintático: falha no parsing de instrução inválida.\n@*(#&!&@(#&(!$(&*&*(@!&*(&*()))))))\n@$&*!*($))($()()())");
+  printf("Erro sintático: falha no parsing de instrução inválida.\n");
   return INSTRUCTION_FAIL;
 
   /*
@@ -441,6 +463,7 @@ int parse_line(char **line_start,
                int token_count,
                InstructionNode *instruction_arr,
                DirectiveNode *directive_arr,
+               SynonymArray *synonym_arr,
                int debug_flag)
 {
   int err = 0;
@@ -479,16 +502,18 @@ int parse_line(char **line_start,
 
   InstructionNode *instr = search_instruction_tmp(instruction_arr, *token_ptr);
   if (instr)
-    return parse_instruction(instruction_arr, directive_arr,
+    return parse_instruction(instruction_arr, directive_arr, synonym_arr,
                              token_ptr, instr, debug_flag);
 
   DirectiveNode *direc = search_directive_tmp(directive_arr, *token_ptr);
   if (direc)
   {
-    err = parse_directive(instruction_arr, directive_arr,
+    err = parse_directive(instruction_arr, directive_arr, synonym_arr,
                           &token_ptr, direc, debug_flag);
 
-    if (!str_is_end_of_line(*token_ptr) && token_count > (token_ptr - line_start))
+    if (err == SYNTAX_OK &&
+        !str_is_end_of_line(*token_ptr) &&
+        token_count > (token_ptr - line_start))
     {
       if (debug_flag)
         printf("\n");
@@ -513,6 +538,9 @@ int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr,
   int line_count = 0;
   int token_line_count = 0;
   char **line_start = token_arr->array;
+
+  SynonymArray *synonym_arr = init_synonym_array(300);
+
   for (int i = 0; i < token_arr->back; i++)
   {
     if (!str_compare(token_arr->array[i], "\n"))
@@ -524,7 +552,7 @@ int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr,
       {
         int err =
             parse_line(line_start, token_line_count, instr_arr, direc_arr,
-                       debug_flag);
+                       synonym_arr, debug_flag);
 
         if (debug_flag)
           printf("\n");
@@ -539,5 +567,6 @@ int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr,
       line_start = &token_arr->array[i + 1];
     }
   }
-  // printf("\n");
+
+  return SYNTAX_OK;
 }

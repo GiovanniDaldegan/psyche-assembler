@@ -24,9 +24,9 @@ enum Line
 int get_token_type(char *token);
 int token_is_reserved(InstructionNode *instruction_array, DirectiveNode *directive_array, char *token);
 
-int parse_directive(InstructionNode *instruction_array, DirectiveNode *directive_array, char ***directive_ptr, DirectiveNode *directive, int debug_flag);
-int parse_expression(InstructionNode *instruction_arr, DirectiveNode *directive_arr, char ***expr_ptr, int debug_flag);
-int parse_instruction(InstructionNode *instruction_array, DirectiveNode *directive_array, char **instruction_ptr, InstructionNode *instruction, int debug_flag);
+int parse_directive(InstructionNode *instruction_array, DirectiveNode *directive_array, SynonymArray *synonym_array, char ***directive_ptr, DirectiveNode *directive, int debug_flag);
+int parse_expression(InstructionNode *instruction_arr, DirectiveNode *directive_array, SynonymArray *synonym_array, char ***expr_ptr, int debug_flag);
+int parse_instruction(InstructionNode *instruction_array, DirectiveNode *directive_array, SynonymArray *synonym_array, char **instruction_ptr, InstructionNode *instruction, int debug_flag);
 
-int parse_line(char **line_start, int token_count, InstructionNode *instruction_array, DirectiveNode *directive_array, int debug_flag);
+int parse_line(char **line_start, int token_count, InstructionNode *instruction_array, DirectiveNode *directive_array, SynonymArray *synonym_array, int debug_flag);
 int parse_code(TokenArray *token_arr, SymbolArray *symbol_arr, InstructionNode *instr_arr, DirectiveNode *direc_arr, int debug_flag);
