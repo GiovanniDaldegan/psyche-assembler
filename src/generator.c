@@ -60,7 +60,8 @@ int inital_pass(TokenArray *token_arr,
                 SynonymArray *synonym_arr,
                 SymbolArray *def_table,
                 SymbolArray *use_table,
-                char *code)
+                TokenArray *text_arr,
+                TokenArray *data_arr)
 {
   int in_text = 0,
       in_data = 0,
@@ -69,8 +70,6 @@ int inital_pass(TokenArray *token_arr,
   int line_count = 1,
       empty_line = 0;
 
-  TokenArray *text_arr = init_token_array(300);
-  TokenArray *data_arr = init_token_array(300);
   TokenArray **curr_sec_tok_arr = NULL;
 
   for (char **token_ptr = token_arr->array;
@@ -302,11 +301,14 @@ int two_pass(TokenArray *token_arr,
              char *gen_code)
 {
   SynonymArray *synonym_arr = init_synonym_array(20);
+  TokenArray *text_arr = init_token_array(300);
+  TokenArray *data_arr = init_token_array(300);
+
   SymbolArray *def_table = init_symbol_array(300);
   SymbolArray *use_table = init_symbol_array(300);
 
   inital_pass(token_arr, sybmol_arr, synonym_arr,
-              def_table, use_table, gen_code);
+              def_table, use_table, text_arr, data_arr);
   /*
     printf("DEF TABLE\n");
     for (int i = 0; i < def_table->back; i++)
