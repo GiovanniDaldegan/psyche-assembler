@@ -66,11 +66,18 @@ enum SemanticError
   MACRO_REDEFINED, // definição repetida de macro
 
   SYNONYM_IN_SECTION, // sinônimo definido em seção
-  SYNONYM_REDEFINED, // sinônimo definido em seção
+  SYNONYM_REDEFINED,  // sinônimo definido em seção
 
   MISSING_TEXT, // seção de texto ausente
 
   SEMANTIC_UNDEFINED_ERROR // erro indefinido
+};
+
+enum GenerationError
+{
+  GENERATION_OK,
+
+  GENERATION_FAILED,
 };
 
 /*

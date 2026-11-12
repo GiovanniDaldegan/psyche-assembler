@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 // char categories
 static inline int char_is_ignored(char chr);
@@ -25,3 +26,5 @@ int str_is_end_of_line(char *token);
 char *get_filename_extention(char *filename);
 
 void print_string_array(char **arr, int n_elements);
+char *array_to_str(char **str_array, int str_count, char separator);
+char *int_to_str(long long value);

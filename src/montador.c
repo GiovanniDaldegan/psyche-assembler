@@ -148,5 +148,8 @@ int main(int argc, char *argv[])
     printf("\n");
   }
 
+  char *generated_code;
+  two_pass(token_arr, instruction_array, directive_array, symbol_arr, generated_code);
+
   return 0;
 }

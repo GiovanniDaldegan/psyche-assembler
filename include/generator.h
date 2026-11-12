@@ -1,4 +1,10 @@
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "hash_table.h"
+#include "token_array.h"
+#include "symbol_array.h"
 
 typedef struct _prog
 {
@@ -9,8 +15,4 @@ typedef struct _prog
   char *macro_def_table;
 } Program;
 
-// MacroNode *define_macros(char *code, HashTable macro_name_table, char *macro_def_table);
-// char *expand_macros(char *code, HashTable *macro_table);
-
-// tab uso, tab simbolos (sem definições),
-char *two_pass(char *code, HashTable *symbol_table, HashTable *extern_table);
+int two_pass(TokenArray *token_arr, InstructionNode *instruction_arr, DirectiveNode *directive_arr, SymbolArray *sybmol_arr, char* generated_code);

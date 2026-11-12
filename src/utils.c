@@ -50,6 +50,19 @@ static inline char capitalize_char(char chr)
              : chr;
 }
 
+int str_is_numeric(char *str)
+{
+  while (*str != '\0')
+  {
+    if (!char_is_digit(*str))
+    {
+      return 0;
+    }
+    str++;
+  }
+  return 1;
+}
+
 void capitalize_str(char *str)
 {
   int len = strlen(str);
@@ -131,4 +144,61 @@ char *get_filename_extention(char *filename)
     back--;
   }
   return NULL;
+}
+
+// `separator = 0` adds no separator
+char *array_to_str(char **str_arr, int str_count, char separator)
+{
+  int total_size = 0;
+  int sep_incr = (separator == '\0') ? 0 : 1;
+
+  for (int i = 0; i < str_count; i++)
+    total_size += strlen(str_arr[i]) + sep_incr;
+
+  char *str = (char *)malloc(total_size);
+  char *pos = str;
+  for (int i = 0; i < str_count; i++)
+  {
+    strcpy(pos, str_arr[i]);
+    if (separator != '\0')
+      *(pos + 1) = separator;
+    pos += strlen(str_arr[i]) + sep_incr;
+  }
+
+  return str;
+}
+
+char *int_to_str(long long value)
+{
+  if (value == 0)
+  {
+    char *str = (char *)malloc(2);
+    str[0] = '0';
+    str[1] = '\0';
+    return str;
+  }
+
+  int sign = (value < 0) ? -1 : 1;
+  value *= sign;
+
+  int len = 0;
+  char *str = (char *)malloc(35),
+       *str_invert = (char *)malloc(35);
+
+  while (value > 0)
+  {
+    str_invert[len++] = '0' + (value % 10);
+    value /= 10;
+  }
+
+  str[(sign == -1) + len] = '\0';
+  int j = 0;
+  for (int i = (sign == -1) + len - 1; i >= (sign == -1); i--)
+  {
+    str[i] = str_invert[j++];
+  }
+  if (sign == -1)
+    str[0] = '-';
+
+  return str;
 }
