@@ -15,4 +15,10 @@ typedef struct _prog
   char *macro_def_table;
 } Program;
 
-int two_pass(TokenArray *token_arr, InstructionNode *instruction_arr, DirectiveNode *directive_arr, SymbolArray *sybmol_arr, char* generated_code);
+int get_numeric_value(SynonymArray *synonym_arr, char *token);
+int insert_in_section(TokenArray **section_ptr, char *token);
+char *concat_sections(char *sec_text, char *sec_data);
+
+int inital_pass(TokenArray *token_arr, SymbolArray *symbol_array, SynonymArray *synonym_arr, SymbolArray *def_table, SymbolArray *use_table, char *code);
+
+int two_pass(TokenArray *token_arr, InstructionNode *instruction_arr, DirectiveNode *directive_arr, SymbolArray *sybmol_arr, char *generated_code);

@@ -19,6 +19,8 @@
  * adicionar valor dos rótulos nas referências
  */
 
+#include "../include/generator.h"
+
 int get_numeric_value(SynonymArray *synonym_arr, char *token)
 {
   if (str_is_numeric(token))
@@ -33,6 +35,15 @@ int get_numeric_value(SynonymArray *synonym_arr, char *token)
   return -1;
 }
 
+int insert_in_section(TokenArray **section_ptr, char *token)
+{
+  if (section_ptr == NULL)
+    return OUT_OF_SECTION;
+
+  insert_token(*section_ptr, token);
+  return GENERATION_OK;
+}
+
 char *concat_sections(char *sec_text, char *sec_data)
 {
   char *code =
@@ -45,7 +56,6 @@ char *concat_sections(char *sec_text, char *sec_data)
 }
 
 int inital_pass(TokenArray *token_arr,
-                DirectiveNode *directive_arr,
                 SymbolArray *symbol_array,
                 SynonymArray *synonym_arr,
                 SymbolArray *def_table,
@@ -83,13 +93,10 @@ int inital_pass(TokenArray *token_arr,
       // while token_ptr lays on a \n, skip
       empty_line = 1;
 
-      if (!curr_sec_tok_arr)
+      if (!in_text && !in_data)
         continue;
       else
-      {
-        insert_token(*curr_sec_tok_arr, "\n");
-        continue;
-      }
+        insert_in_section(curr_sec_tok_arr, "\n");
     }
     else
     {
@@ -117,57 +124,50 @@ int inital_pass(TokenArray *token_arr,
         printf("Erro doido: seção inválida em geração de código.\n");
         return -1;
       }
+
+      empty_line = 1;
     }
 
     else if (str_compare(*(token_ptr + 1), "EQU"))
     {
       if (!str_is_numeric(*(token_ptr + 2)))
       {
-        printf("%s não é número??\n", *(token_ptr + 2));
+        printf("Erro na geração: %s não é número??\n", *(token_ptr + 2));
       }
 
       insert_synonym(synonym_arr, *(token_ptr), atoi(*(token_ptr + 2)));
       token_ptr += 2;
 
-      // doesn't change the token array
+      // skips next \n
       empty_line = 1;
     }
 
     else if (str_compare(*token_ptr, "CONST"))
     {
-
       token_ptr++;
       int val = get_numeric_value(synonym_arr, *token_ptr);
       char *val_str = int_to_str(val);
 
-      if (!curr_sec_tok_arr)
-        continue;
-      else
-        insert_token(*curr_sec_tok_arr, val_str);
+      if (insert_in_section(curr_sec_tok_arr, val_str) != GENERATION_OK)
+      {
+        printf("Erro na geração: diretiva %s inválida fora de seção.\n",
+               *(token_ptr - 1));
+        return GENERATION_FAILED;
+      }
     }
 
     else if (str_compare(*token_ptr, "+"))
     {
       token_ptr++;
-      char *val_str;
-      if (str_is_numeric(*(token_ptr)))
-        val_str = *token_ptr;
-      else
-      {
-        Synonym *syn = search_synonym(synonym_arr, *(token_ptr));
-        if (syn)
-          val_str = int_to_str(syn->value);
-        else
-          val_str = "";
-      }
+      int val = get_numeric_value(synonym_arr, *token_ptr);
+      char *val_str = int_to_str(val);
 
-      if (!curr_sec_tok_arr)
+      if (insert_in_section(curr_sec_tok_arr, val_str) != GENERATION_OK)
       {
-        printf("Erro na geração: diertiva inválida fora de seção.\n");
+        printf("Erro na geração: diretiva %s inválida fora de seção.\n",
+               *(token_ptr - 1));
         return GENERATION_FAILED;
       }
-      else
-        insert_token(*curr_sec_tok_arr, val_str);
     }
 
     else if (str_compare(*token_ptr, "SPACE"))
@@ -178,13 +178,12 @@ int inital_pass(TokenArray *token_arr,
       {
         for (int i = 0; i < val; i++)
         {
-          if (!curr_sec_tok_arr)
+          if (insert_in_section(curr_sec_tok_arr, "0") != GENERATION_OK)
           {
-            printf("Erro na geração: diertiva inválida fora de seção.\n");
+            printf("Erro na geração: diretiva %s inválida fora de seção.\n",
+                   *token_ptr);
             return GENERATION_FAILED;
           }
-          else
-            insert_token(*curr_sec_tok_arr, "0");
 
           // stops at the last "0"
           if (i == val - 1)
@@ -193,30 +192,22 @@ int inital_pass(TokenArray *token_arr,
       }
       else
       {
-        if (!curr_sec_tok_arr)
+        if (insert_in_section(curr_sec_tok_arr, "0") != GENERATION_OK)
         {
-          printf("Erro na geração: diertiva inválida fora de seção.\n");
+          printf("Erro na geração: diretiva inválida fora de seção.\n");
           return GENERATION_FAILED;
         }
-        else
-          insert_token(*curr_sec_tok_arr, "0");
       }
     }
 
     else if (str_compare(*token_ptr, "IF"))
     {
-      printf("if com %s: ", *(token_ptr + 1));
-      if (get_numeric_value(synonym_arr, *(token_ptr + 1)))
-      {
-        printf("não ignora\n");
+      if (get_numeric_value(synonym_arr, *(token_ptr + 1)) == 0)
         ignore_next_line = 1;
-      }
-      else
-        printf("ignora\n");
 
       token_ptr++;
 
-      // doesn't change the token array
+      // skips next \n
       empty_line = 1;
     }
 
@@ -224,17 +215,14 @@ int inital_pass(TokenArray *token_arr,
     {
       Symbol *symb = search_symbol(symbol_array, *(token_ptr + 1));
       if (symb)
-      {
-        printf("definição públiac de %s\n", *(token_ptr + 1));
         insert_symbol_ready(def_table, symb);
-      }
+
       else
-      {
-        printf("símbolo \"%s\" não definido!\n", *(token_ptr + 1));
-      }
+        printf("Erro na geração: símbolo \"%s\" não definido!\n", *(token_ptr + 1));
+
       token_ptr++;
 
-      // doesn't change the token array
+      // skips next \n
       empty_line = 1;
     }
 
@@ -242,19 +230,21 @@ int inital_pass(TokenArray *token_arr,
     {
       Symbol *symb = search_symbol(symbol_array, *(token_ptr));
       if (symb)
-      {
-        printf("rótulo externo %s\n", *(token_ptr));
         insert_symbol_ready(use_table, symb);
-      }
       else
-      {
-        printf("símbolo não definido!\n");
-      }
+        printf("Erro na geração: símbolo \"%s\" não definido!\n", *(token_ptr));
+
       token_ptr += 2;
     }
 
-    else if (str_compare(*token_ptr, "BEGIN") ||
-             str_compare(*token_ptr, "END"))
+    else if (str_compare(*token_ptr, "END"))
+    {
+      // ignore directive
+      empty_line = 1;
+      continue;
+    }
+
+    else if (str_compare(*token_ptr, "BEGIN"))
     {
       // ignore directive (but starts new line)
       continue;
@@ -263,16 +253,25 @@ int inital_pass(TokenArray *token_arr,
     // any other token (non-directive, non )
     else
     {
+      // printf("%s,", *token_ptr);
 
-      if (!curr_sec_tok_arr)
-      {
-        printf("Erro na geração: diertiva inválida fora de seção.\n");
-        return GENERATION_FAILED;
-      }
-      else
-        insert_token(*curr_sec_tok_arr, *token_ptr);
+      if (!str_is_end_of_line(*token_ptr))
+        insert_in_section(curr_sec_tok_arr, *token_ptr);
     }
   }
+
+  /*
+  printf("\nseção texto:\n");
+  for (int i = 0; i < text_arr->back; i++)
+  {
+    printf("%s|", text_arr->array[i]);
+  }
+  printf("\nseção data:\n");
+  for (int i = 0; i < data_arr->back; i++)
+  {
+    printf("%s|", data_arr->array[i]);
+  }
+  */
 }
 
 int first_pass(TokenArray *token_arr,
@@ -306,7 +305,7 @@ int two_pass(TokenArray *token_arr,
   SymbolArray *def_table = init_symbol_array(300);
   SymbolArray *use_table = init_symbol_array(300);
 
-  inital_pass(token_arr, directive_arr, sybmol_arr, synonym_arr,
+  inital_pass(token_arr, sybmol_arr, synonym_arr,
               def_table, use_table, gen_code);
   /*
     printf("DEF TABLE\n");

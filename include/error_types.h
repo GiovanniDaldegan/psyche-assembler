@@ -77,6 +77,7 @@ enum GenerationError
 {
   GENERATION_OK,
 
+  OUT_OF_SECTION,
   GENERATION_FAILED,
 };
 
