@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
   err = scan_file(argv[1], token_arr, symbol_arr,
                   instruction_array, directive_array);
 
-  if (err != 0)
+  if (err != LEXIC_OK)
   {
     printf("\nFalha no scanning. A montagem foi abortada.\n");
     return 1;
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
   err = parse_code(token_arr, symbol_arr, (InstructionNode *)instruction_array,
                    (DirectiveNode *)directive_array, debug_flag);
 
-  if (err != 0)
+  if (err != SYNTAX_OK)
   {
     printf("\nParsing falhou. A montagem foi abortada.\n");
     return 1;
@@ -133,7 +133,20 @@ int main(int argc, char *argv[])
            "================================\n\n");
   }
 
-  semantic_analysis(token_arr, symbol_arr, synonym_arr);
+  err = semantic_analysis(token_arr, symbol_arr, synonym_arr, debug_flag);
+
+  if (err != SEMANTIC_OK)
+  {
+    printf("\nAnálise semântica identificou erro. A montagem foi abortada.\n");
+    return 1;
+  }
+
+  if (debug_flag)
+  {
+    printf("\nFim da análise sintática. Pressione Enter.");
+    getchar();
+    printf("\n");
+  }
 
   return 0;
 }
