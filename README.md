@@ -24,7 +24,8 @@ E para ligar (fonte pode ser de tipo `.asm` ou `.obj`):
 ./ligador [fonte1] [fonte2] [fonte3]
 ```
 
-Para verificar o histórico de commits, garanta que tem o git instalado e execute um dos seguintes comandos no diretório raiz:
+Para verificar o histórico de commits, garanta que tem o git instalado e execute
+um dos seguintes comandos no diretório raiz:
 
 ```sh
 # histórico no terminal
@@ -114,7 +115,8 @@ ROT:    INPUT   N1
 ```
 
 > [!warning]
-> Atenção, **"TEXT" e "DATA" são palavras reservadas**, não são símbolos/rótulos aceitos.
+> Atenção, **"TEXT" e "DATA" são palavras reservadas**, não são símbolos/rótulos
+> aceitos.
 
 A seguir, são apresentadas as diretivas implementadas e as instruções da
 linguagem estudada.
@@ -122,20 +124,20 @@ linguagem estudada.
 ### Diretivas
 
 Legenda: \
-**ARG[i]**: i-ésimo argumento fornecido 
+**$\text{ARG[i]}$**: $i$-ésimo argumento fornecido 
 
-| Diretiva | Nº args    | Descrição                                                     |
-| -------- | ---------- | ------------------------------------------------------------- |
-| SPACE    | 0 \| 1     | reserva 0 ou n palavras com valor 0                           |
-| CONST    | 1          | reserva 1 palavra com o valor de ARG[1]                       |
-| EQU      | 2 (infixo) | define o símbolo ARG[1] como sinônimo para a constante ARG[2] |
-| IF       | 1          | caso ARG[1] == 0, ignora a linha seguinte na montagem         |
-| BEGIN    | 0          | inicia módulo                                                 |
-| END      | 0          | termina módulo                                                |
-| PUBLIC   | 1          | indica símbolo definido no módulo                             |
-| EXTERN   | 0          | indica ARG[1] como símbolo definido em módulo externo         |
-| +        | 2 (infixo) | soma o valor de um símbolo (ARG[1]) a um número (ARG[2])      |
-| SECTION  | 1          | inicia seção de nome ARG[1] (TEXT ou DATA)                    |
+| Diretiva | Nº args    | Descrição                                                                       |
+| -------- | ---------- | ------------------------------------------------------------------------------- |
+| SPACE    | 0 \| 1     | reserva 0 ou $\text{ARG[1]}$ palavras com valor 0                               |
+| CONST    | 1          | reserva 1 palavra com o valor de $\text{ARG[1]}$                                |
+| EQU      | 2 (infixo) | define o símbolo $\text{ARG[1]}$ como sinônimo para a constante $\text{ARG[2]}$ |
+| IF       | 1          | caso $\text{ARG[1]}$ == 0, ignora a linha seguinte na montagem                  |
+| BEGIN    | 0          | inicia módulo                                                                   |
+| END      | 0          | termina módulo                                                                  |
+| PUBLIC   | 1          | indica símbolo definido no módulo                                               |
+| EXTERN   | 0          | indica $\text{ARG[1]}$ como símbolo definido em módulo externo                  |
+| +        | 2 (infixo) | soma o valor de um símbolo ($\text{ARG[1]}$) a um número ($\text{ARG[2]}$)      |
+| SECTION  | 1          | inicia seção de nome $\text{ARG[1]}$ (TEXT ou DATA)                             |
 
 > [!note]
 > A diretiva EQU deve ser utilizada apenas antes das seções TEXT e DATA. \
@@ -153,21 +155,21 @@ Legenda:\
 **mem(PTR)**: valor guardado em memória no endereço PTR \
 **in()**: retorna o valor lido da entrada \
 **out(PTR)**: imprime o valor guardado em PTR na saída \
-**ARG[i]**: i-ésimo argumento fornecido 
+**$\text{ARG[i]}$**: i-ésimo argumento fornecido 
 
-| Instrução | opcode | tamanho | Nº args | descrição                          |
-| --------- | ------ | ------- | ------- | ---------------------------------- |
-| ADD       | 1      | 2       | 1       | ACC <- ACC + mem(ARG[1])           |
-| SUB       | 2      | 2       | 1       | ACC <- ACC - mem(ARG[1])           |
-| MULT      | 3      | 2       | 1       | ACC <- ACC * mem(ARG[1])           |
-| DIV       | 4      | 2       | 1       | ACC <- ACC / mem(ARG[1]) (inteira) |
-| JMP       | 5      | 2       | 1       | PC <- ARG[1]                       |
-| JMPN      | 6      | 2       | 1       | PC <- ARG[1] se ACC < 0            |
-| JMPP      | 7      | 2       | 1       | PC <- ARG[1] se ACC > 0            |
-| JMPZ      | 8      | 2       | 1       | PC <- ARG[1] se ACC == 0           |
-| COPY      | 9      | 3       | 2       | mem(ARG[2]) <- mem(ARG[2])         |
-| LOAD      | 10     | 2       | 1       | ACC <- mem(ARG[1])                 |
-| STORE     | 11     | 2       | 1       | mem(ARG[1]) <- ACC                 |
-| INPUT     | 12     | 2       | 1       | mem(ARG[1]) <- in()                |
-| OUTPUT    | 13     | 2       | 1       | out(mem(ARG[1]))                   |
-| STOP      | 14     | 1       | 0       | termina o programa                 |
+| Instrução | opcode | tamanho | Nº args | descrição                                    |
+| --------- | ------ | ------- | ------- | -------------------------------------------- |
+| ADD       | 1      | 2       | 1       | ACC <- ACC + mem($\text{ARG[1]}$)            |
+| SUB       | 2      | 2       | 1       | ACC <- ACC - mem($\text{ARG[1]}$)            |
+| MULT      | 3      | 2       | 1       | ACC <- ACC * mem($\text{ARG[1]}$)            |
+| DIV       | 4      | 2       | 1       | ACC <- ACC / mem($\text{ARG[1]}$) (inteira)  |
+| JMP       | 5      | 2       | 1       | PC <- $\text{ARG[1]}$                        |
+| JMPN      | 6      | 2       | 1       | PC <- $\text{ARG[1]}$ se ACC < 0             |
+| JMPP      | 7      | 2       | 1       | PC <- $\text{ARG[1]}$ se ACC > 0             |
+| JMPZ      | 8      | 2       | 1       | PC <- $\text{ARG[1]}$ se ACC == 0            |
+| COPY      | 9      | 3       | 2       | mem($\text{ARG[2]}$) <- mem($\text{ARG[2]}$) |
+| LOAD      | 10     | 2       | 1       | ACC <- mem($\text{ARG[1]}$)                  |
+| STORE     | 11     | 2       | 1       | mem($\text{ARG[1]}$) <- ACC                  |
+| INPUT     | 12     | 2       | 1       | mem($\text{ARG[1]}$) <- in()                 |
+| OUTPUT    | 13     | 2       | 1       | out(mem($\text{ARG[1]}$))                    |
+| STOP      | 14     | 1       | 0       | termina o programa                           |
