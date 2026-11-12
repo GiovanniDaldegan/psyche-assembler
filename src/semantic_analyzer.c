@@ -119,7 +119,7 @@ int semantic_analysis(TokenArray *token_arr,
         break;
       }
 
-      if (token_count == 1 || str_compare(*(token_ptr - 1), "PUBLIC"))
+      if (token_count == 1) //  || str_compare(*(token_ptr - 1), "PUBLIC")
         update_symbol(symb, line_count, 1);
     }
   }
