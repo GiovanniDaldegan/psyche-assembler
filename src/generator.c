@@ -59,8 +59,7 @@ int inital_pass(TokenArray *token_arr,
                 SynonymArray *synonym_arr,
                 SymbolArray *def_table,
                 SymbolArray *use_table,
-                TokenArray *text_arr,
-                TokenArray *data_arr)
+                TokenArray *program_arr)
 {
   int in_text = 0,
       in_data = 0,
@@ -69,6 +68,8 @@ int inital_pass(TokenArray *token_arr,
   int line_count = 1,
       empty_line = 0;
 
+  TokenArray *text_arr = init_token_array(300);
+  TokenArray *data_arr = init_token_array(300);
   TokenArray **curr_sec_tok_arr = NULL;
 
   for (char **token_ptr = token_arr->array;
@@ -246,47 +247,64 @@ int inital_pass(TokenArray *token_arr,
         insert_in_section(curr_sec_tok_arr, *token_ptr);
     }
   }
-  /*
-  printf("\nseção texto:\n");
+
   for (int i = 0; i < text_arr->back; i++)
-  {
-    printf("%s|", text_arr->array[i]);
-  }
-  printf("\nseção data:\n");
+    insert_in_section(&program_arr, text_arr->array[i]);
+
   for (int i = 0; i < data_arr->back; i++)
+    insert_in_section(&program_arr, data_arr->array[i]);
+
+  /*
+  printf("programa:\n");
+  for (int i = 0; i < program_arr->back; i++)
   {
-    printf("%s|", data_arr->array[i]);
+    printf("%s|", program_arr->array[i]);
   }
   */
 }
 
 int first_pass(InstructionNode *instruction_arr,
-               TokenArray *text_arr,
-               TokenArray *data_arr)
+               DirectiveNode *directive_arr,
+               TokenArray *program_arr,
+               Symbol *symbol_table)
 {
   int token_count = 0;
 
-  for (char **token_ptr = text_arr->array;
-       (token_ptr - text_arr->array) < text_arr->back;
+  for (char **token_ptr = program_arr->array;
+       (token_ptr - program_arr->array) < program_arr->back;
        token_ptr++)
   {
+    if (str_is_end_of_line(*token_ptr))
+    {
+      token_count = 0;
+      continue;
+    }
+
+    if (search_directive_tmp(directive_arr, *token_ptr))
+    {
+    }
+
+    else if (1)
+    {
+    }
   }
 
-  for (char **token_ptr = text_arr->array;
-       (token_ptr - text_arr->array) < text_arr->back;
+  for (char **token_ptr = program_arr->array;
+       (token_ptr - program_arr->array) < program_arr->back;
        token_ptr++)
   {
   }
 }
 
 int second_pass(TokenArray *token_arr,
-                InstructionNode *instruction_arr,
                 SymbolArray *sybmol_arr)
 {
   for (char **token_ptr = token_arr->array;
        (token_ptr - token_arr->array) < token_arr->back;
        token_ptr++)
   {
+    // define symbol at symbol table
+    // define symbol at def table
   }
 }
 
@@ -297,13 +315,12 @@ int two_pass(TokenArray *token_arr,
              char *gen_code)
 {
   SynonymArray *synonym_arr = init_synonym_array(20);
-  TokenArray *text_arr = init_token_array(300);
-  TokenArray *data_arr = init_token_array(300);
 
+  TokenArray *program_arr = init_token_array(300);
   SymbolArray *def_table = init_symbol_array(300);
   SymbolArray *use_table = init_symbol_array(300);
 
-  inital_pass(token_arr, synonym_arr, def_table, use_table, text_arr, data_arr);
+  inital_pass(token_arr, synonym_arr, def_table, use_table, program_arr);
   /*
     printf("DEF TABLE\n");
     for (int i = 0; i < def_table->back; i++)
