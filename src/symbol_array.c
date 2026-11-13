@@ -32,6 +32,17 @@ Synonym *init_synonym(char *token, int value)
   return syn;
 }
 
+Pendency *init_pendency(char *token, int addr)
+{
+  Pendency *pend = (Pendency *)malloc(sizeof(Pendency));
+
+  pend->token = (char *)malloc(sizeof(char) * (strlen(token) + 1));
+  strcpy(pend->token, token);
+  pend->addr = addr;
+
+  return pend;
+}
+
 SymbolArray *init_symbol_array(int capacity)
 {
   SymbolArray *symbol_arr = (SymbolArray *)malloc(sizeof(SymbolArray));
@@ -140,4 +151,42 @@ Synonym *search_synonym(SynonymArray *synonym_array, char *token)
       return synonym_array->array[i];
   }
   return NULL;
+}
+
+PendencyArray *init_pendency_array(int capacity)
+{
+  PendencyArray *pendency_array = (PendencyArray *)malloc(sizeof(PendencyArray));
+
+  capacity = SYNONYM_INITIAL_CAPACITY;
+  pendency_array->capacity = capacity;
+  pendency_array->back = 0;
+  pendency_array->array = (Pendency **)malloc(sizeof(Pendency *) * capacity);
+
+  return pendency_array;
+}
+
+void resize_pendency_array(PendencyArray *pendency_array, int increment)
+{
+  increment = SYNONYM_INITIAL_CAPACITY;
+  pendency_array->capacity += increment;
+  Pendency **new_array = (Pendency **)malloc(sizeof(Pendency *) * pendency_array->capacity);
+
+  for (int i = 0; i < pendency_array->back; i++)
+    new_array[i] = pendency_array->array[i];
+
+  free(pendency_array->array);
+  pendency_array->array = new_array;
+}
+
+void insert_pendency(PendencyArray *pendency_array, char *token, int addr)
+{
+  if (pendency_array->back > pendency_array->capacity)
+  {
+    printf("Vetor de símbolos deu overflow!\n");
+    return;
+  }
+  else if (pendency_array->back == pendency_array->capacity)
+    resize_pendency_array(pendency_array, SYNONYM_INITIAL_CAPACITY);
+
+  pendency_array->array[pendency_array->back++] = init_pendency(token, addr);
 }
