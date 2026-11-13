@@ -148,8 +148,10 @@ int main(int argc, char *argv[])
     printf("\n");
   }
 
+  SymbolArray *symbol_table = init_symbol_array(300);
   char *generated_code;
-  two_pass(token_arr, instruction_array, directive_array, symbol_arr, generated_code);
+  two_pass(token_arr, instruction_array, directive_array,
+           symbol_table, generated_code, debug_flag);
 
   return 0;
 }

@@ -35,7 +35,7 @@ typedef struct _pend
 typedef struct _pend_arr
 {
   int capacity, back;
-  Synonym **array;
+  Pendency **array;
 } PendencyArray;
 
 Symbol *init_symbol(char *token, int value, int defined);

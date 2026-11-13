@@ -59,7 +59,8 @@ int inital_pass(TokenArray *token_arr,
                 SynonymArray *synonym_arr,
                 SymbolArray *def_table,
                 SymbolArray *use_table,
-                TokenArray *program_arr)
+                TokenArray *program_arr,
+                int debug_flag)
 {
   int in_text = 0,
       in_data = 0,
@@ -254,21 +255,27 @@ int inital_pass(TokenArray *token_arr,
   for (int i = 0; i < data_arr->back; i++)
     insert_in_section(&program_arr, data_arr->array[i]);
 
-  /*
-  printf("programa:\n");
-  for (int i = 0; i < program_arr->back; i++)
+  if (debug_flag)
   {
-    printf("%s|", program_arr->array[i]);
+    printf("Representação intermediária do programa:\n");
+    for (int i = 0; i < program_arr->back; i++)
+    {
+      printf("%s ", program_arr->array[i]);
+    }
+    printf("\n");
   }
-  */
 }
 
-int first_pass(InstructionNode *instruction_arr,
+int first_pass(TokenArray *program_arr,
+               InstructionNode *instruction_arr,
                DirectiveNode *directive_arr,
-               TokenArray *program_arr,
-               Symbol *symbol_table)
+               SymbolArray *symbol_table,
+               SymbolArray *def_table)
 {
-  int token_count = 0;
+  int token_count = 0,
+      position_counter = 0;
+
+  TokenArray *new_program_arr = init_token_array(300);
 
   for (char **token_ptr = program_arr->array;
        (token_ptr - program_arr->array) < program_arr->back;
@@ -280,39 +287,132 @@ int first_pass(InstructionNode *instruction_arr,
       continue;
     }
 
-    if (search_directive_tmp(directive_arr, *token_ptr))
-    {
-    }
+    token_count++;
 
-    else if (1)
-    {
-    }
-  }
+    int is_def = token_count == 1 &&
+                 !search_instruction_tmp(instruction_arr, *token_ptr) &&
+                 !search_directive_tmp(directive_arr, *token_ptr);
 
-  for (char **token_ptr = program_arr->array;
-       (token_ptr - program_arr->array) < program_arr->back;
-       token_ptr++)
-  {
+    if (!is_def &&
+        (str_is_numeric(*token_ptr) || !str_is_numeric(*(token_ptr + 1))))
+      position_counter++;
+
+    if (is_def)
+    {
+      if (search_symbol(symbol_table, *token_ptr))
+        printf("Erro doido: símbolo \"%s\" já definido.\n", *token_ptr);
+      else
+      {
+        Symbol *new_symb = init_symbol(*token_ptr, position_counter, 1);
+        insert_symbol_ready(symbol_table, new_symb);
+
+        Symbol *def_symb = search_symbol(def_table, *token_ptr);
+        if (def_symb)
+          update_symbol(def_symb, position_counter, 1);
+      }
+    }
   }
 }
 
-int second_pass(TokenArray *token_arr,
-                SymbolArray *sybmol_arr)
+int second_pass(TokenArray **program_arr,
+                SymbolArray *sybmol_table,
+                SymbolArray *use_table,
+                PendencyArray *pendency_arr)
 {
-  for (char **token_ptr = token_arr->array;
-       (token_ptr - token_arr->array) < token_arr->back;
+  TokenArray *new_program = init_token_array(300);
+  int token_count = 0,
+      position_count = 0;
+
+  for (char **token_ptr = (*program_arr)->array;
+       (token_ptr - (*program_arr)->array) < (*program_arr)->back;
        token_ptr++)
   {
-    // define symbol at symbol table
-    // define symbol at def table
+    // substitute symbs with vals
+    token_count++;
+
+    if (str_is_end_of_line(*token_ptr))
+    {
+      token_count = 0;
+      continue;
+    }
+
+    if (token_count != 1)
+    {
+      Symbol *label = search_symbol(sybmol_table, *token_ptr);
+      if (label)
+      {
+        int val = label->value;
+
+        if (str_is_numeric(*(token_ptr + 1)))
+        {
+          val += atoi(*(token_ptr + 1));
+          token_ptr++;
+        }
+
+        insert_token(new_program, int_to_str(val));
+        position_count++;
+        continue;
+      }
+      else
+      {
+        Symbol *ext_ref = search_symbol(use_table, *token_ptr);
+        if (ext_ref)
+        {
+          insert_pendency(pendency_arr, *token_ptr, position_count - 1);
+
+          insert_token(new_program, "0");
+          position_count++;
+          continue;
+        }
+      }
+    }
+
+    Symbol *symb = search_symbol(sybmol_table, *token_ptr);
+    if (!symb)
+      insert_token(new_program, *token_ptr);
+
+    position_count++;
   }
+
+  free(*program_arr);
+  *program_arr = new_program;
+}
+
+int generate_object(TokenArray **program_arr,
+                    SymbolArray *symbol_table,
+                    SymbolArray *def_table,
+                    SymbolArray *use_table,
+                    InstructionNode *instruction_arr)
+{
+  // 1. new program
+  TokenArray *new_program_arr = init_token_array(300);
+
+  for (char **token_ptr = (*program_arr)->array;
+       (token_ptr - (*program_arr)->array) < (*program_arr)->back;
+       token_ptr++)
+  {
+
+    InstructionNode *instr =
+        search_instruction_tmp(instruction_arr, *token_ptr);
+    if (instr)
+      insert_token(new_program_arr, int_to_str(instr->opcode));
+    else
+      insert_token(new_program_arr, *token_ptr);
+  }
+
+  free(*program_arr);
+  *program_arr = new_program_arr;
+
+  // 2. header
+  // for (int i = 0; i < symbol_table, )
 }
 
 int two_pass(TokenArray *token_arr,
              InstructionNode *instruction_arr,
              DirectiveNode *directive_arr,
-             SymbolArray *sybmol_arr,
-             char *gen_code)
+             SymbolArray *symbol_table,
+             char *gen_code,
+             int debug_flag)
 {
   SynonymArray *synonym_arr = init_synonym_array(20);
 
@@ -320,20 +420,49 @@ int two_pass(TokenArray *token_arr,
   SymbolArray *def_table = init_symbol_array(300);
   SymbolArray *use_table = init_symbol_array(300);
 
-  inital_pass(token_arr, synonym_arr, def_table, use_table, program_arr);
-  /*
-    printf("DEF TABLE\n");
-    for (int i = 0; i < def_table->back; i++)
-    {
-      printf("%s:%d |", def_table->array[i]->token, def_table->array[i]->value);
-    }
+  PendencyArray *pendency_arr = init_pendency_array(300);
 
-    printf("USE TABLE\n");
+  inital_pass(token_arr, synonym_arr, def_table, use_table,
+              program_arr, debug_flag);
+
+  first_pass(program_arr, instruction_arr, directive_arr,
+             symbol_table, def_table);
+
+  printf("Rótulos declarados:\n");
+  for (int i = 0; i < symbol_table->back; i++)
+  {
+    printf("%s: %d, ",
+           symbol_table->array[i]->token, symbol_table->array[i]->value);
+  }
+  printf("\n\n");
+
+  if (debug_flag)
+  {
+    printf("Tabela de definições:\n");
+    for (int i = 0; i < def_table->back; i++)
+      printf("%s: %d, ",
+             def_table->array[i]->token, def_table->array[i]->value);
+
+    printf("\n\nTabela de uso:\n");
     for (int i = 0; i < use_table->back; i++)
-    {
-      printf("%s:%d |", use_table->array[i]->token, use_table->array[i]->value);
-    }
-   */
-  // first_pass();
-  // second_pass(token_arr, instruction_arr, directive_arr, sybmol_arr);
+      printf("%s: %d, ",
+             use_table->array[i]->token, use_table->array[i]->value);
+
+    printf("\n\n");
+  }
+
+  second_pass(&program_arr, symbol_table, use_table, pendency_arr);
+
+  if (debug_flag)
+  {
+    printf("Pendências:\n");
+    for (int i = 0; i < pendency_arr->back; i++)
+      printf("%s: %d, ",
+             pendency_arr->array[i]->token, pendency_arr->array[i]->addr);
+
+    printf("\n\nPrograma com referências calculadas:\n");
+    for (int i = 0; i < program_arr->back; i++)
+      printf("%s ", program_arr->array[i]);
+    printf("\n\n");
+  }
 }
