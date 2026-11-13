@@ -148,10 +148,21 @@ int main(int argc, char *argv[])
     printf("\n");
   }
 
+  char obj_filename[100];
+  strcpy(obj_filename, argv[1]);
+  int ext_pos = strlen(argv[1]) - 3;
+  strcpy(&obj_filename[ext_pos], "obj");
+
   SymbolArray *symbol_table = init_symbol_array(300);
-  char *generated_code;
-  two_pass(token_arr, instruction_array, directive_array,
-           symbol_table, generated_code, debug_flag);
+  char *generated_code = two_pass(token_arr, instruction_array, directive_array,
+                                  symbol_table, debug_flag);
+
+  FILE *o_file = fopen(obj_filename, "w");
+  fprintf(o_file, "%s", generated_code);
+  fclose(o_file);
+
+  printf("\nO programa foi montado com sucesso!\nO arquivo objeto resultante é "
+         "%s.\n", obj_filename);
 
   return 0;
 }

@@ -202,3 +202,14 @@ char *int_to_str(long long value)
 
   return str;
 }
+
+int get_str_arr_line_len(char **str_arr)
+{
+  int total_size = 0;
+  while (!str_compare(*str_arr, "\n"))
+  {
+    total_size += strlen(*str_arr);
+    str_arr++;
+  }
+  return total_size + 1;
+}

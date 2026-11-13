@@ -21,4 +21,4 @@ char *concat_sections(char *sec_text, char *sec_data);
 
 int inital_pass(TokenArray *token_array, SynonymArray *synonym_array, SymbolArray *def_table, SymbolArray *use_table, TokenArray *program_array, int debug_flag);
 
-int two_pass(TokenArray *token_array, InstructionNode *instruction_array, DirectiveNode *directive_array, SymbolArray *sybmol_array, char *generated_code, int debug_flag);
+char *two_pass(TokenArray *token_array, InstructionNode *instruction_array, DirectiveNode *directive_array, SymbolArray *sybmol_array, /* char **generated_code, */ int debug_flag);

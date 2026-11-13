@@ -28,3 +28,4 @@ char *get_filename_extention(char *filename);
 void print_string_array(char **arr, int n_elements);
 char *array_to_str(char **str_array, int str_count, char separator);
 char *int_to_str(long long value);
+int get_str_arr_line_len(char **str_arr);

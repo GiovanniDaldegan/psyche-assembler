@@ -47,7 +47,7 @@ int insert_in_section(TokenArray **section_ptr, char *token)
 char *concat_sections(char *sec_text, char *sec_data)
 {
   char *code =
-      (char *)malloc(sizeof(char) * (strlen(sec_text) + strlen(sec_data)));
+      (char *)malloc(sizeof(char) * (strlen(sec_text) + strlen(sec_data)) + 1);
 
   strcpy(code, sec_text);
   strcpy(code + strlen(sec_text), sec_data);
@@ -378,11 +378,13 @@ int second_pass(TokenArray **program_arr,
   *program_arr = new_program;
 }
 
-int generate_object(TokenArray **program_arr,
-                    SymbolArray *symbol_table,
-                    SymbolArray *def_table,
-                    SymbolArray *use_table,
-                    InstructionNode *instruction_arr)
+char *generate_object(TokenArray **program_arr,
+                      SymbolArray *symbol_table,
+                      SymbolArray *def_table,
+                      SymbolArray *use_table,
+                      PendencyArray *pendency_arr,
+                      InstructionNode *instruction_arr
+                      /* char **gen_code */)
 {
   // 1. new program
   TokenArray *new_program_arr = init_token_array(300);
@@ -403,16 +405,98 @@ int generate_object(TokenArray **program_arr,
   free(*program_arr);
   *program_arr = new_program_arr;
 
+  /*
+  printf("programa foda\n");
+  for (int i = 0; i < (*program_arr)->back; i++)
+  {
+    printf("%s ", (*program_arr)->array[i]);
+  }
+  */
+
   // 2. header
-  // for (int i = 0; i < symbol_table, )
+  char *gen_code = init_string("");
+
+  TokenArray *header = init_token_array(300);
+
+  int prog_str_size = 0;
+  for (int i = 0; i < pendency_arr->back; i++)
+  {
+    char buff[60];
+    int pos = 0;
+    strcpy(&buff[pos], "U,");
+    pos += strlen("U,");
+    strcpy(&buff[pos], pendency_arr->array[i]->token);
+    pos += strlen(pendency_arr->array[i]->token);
+    strcpy(&buff[pos], ",");
+    pos += strlen(",");
+    strcpy(&buff[pos], int_to_str(pendency_arr->array[i]->addr));
+    pos += strlen(int_to_str(pendency_arr->array[i]->addr));
+    strcpy(&buff[pos], "\n");
+    pos += strlen("\n");
+
+    // *gen_code = concat_sections(*gen_code, buff);
+    strcat(gen_code, buff);
+    prog_str_size += pos;
+
+    insert_token(header, "D");
+    insert_token(header, pendency_arr->array[i]->token);
+    insert_token(header, int_to_str(pendency_arr->array[i]->addr));
+    insert_token(header, "\n");
+  }
+
+  for (int i = 0; i < def_table->back; i++)
+  {
+    char buff[60];
+    int pos = 0;
+
+    strcpy(&buff[pos], "D,");
+    pos += strlen("D,");
+    strcpy(&buff[pos], def_table->array[i]->token);
+    pos += strlen(def_table->array[i]->token);
+    strcpy(&buff[pos], ",");
+    pos += strlen(",");
+    strcpy(&buff[pos], int_to_str(def_table->array[i]->value));
+    pos += strlen(int_to_str(def_table->array[i]->value));
+    strcpy(&buff[pos], "\n");
+    pos += strlen("\n");
+
+    // *gen_code = concat_sections(*gen_code, buff);
+    strcat(gen_code, buff);
+    prog_str_size += pos;
+
+    insert_token(header, "D");
+    insert_token(header, def_table->array[i]->token);
+    insert_token(header, int_to_str(def_table->array[i]->value));
+    insert_token(header, "\n");
+  }
+
+  strcat(gen_code, "T,");
+
+  for (int i = 0; i < (*program_arr)->back; i++)
+  {
+    char buff[60];
+    int pos = 0;
+
+    strcpy(&buff[pos], (*program_arr)->array[i]);
+    pos += strlen((*program_arr)->array[i]);
+    strcpy(&buff[pos], " ");
+    pos += strlen(" ");
+
+    // *gen_code = concat_sections(*gen_code, buff);
+    strcat(gen_code, buff);
+    prog_str_size += pos;
+  }
+
+  // *gen_code[prog_str_size + 1] = '\0';
+  return gen_code;
 }
 
-int two_pass(TokenArray *token_arr,
-             InstructionNode *instruction_arr,
-             DirectiveNode *directive_arr,
-             SymbolArray *symbol_table,
-             char *gen_code,
-             int debug_flag)
+char *two_pass(TokenArray *token_arr,
+               InstructionNode *instruction_arr,
+               DirectiveNode *directive_arr,
+               SymbolArray *symbol_table,
+               //  char **gen_code,
+               int debug_flag)
 {
   SynonymArray *synonym_arr = init_synonym_array(20);
 
@@ -428,16 +512,16 @@ int two_pass(TokenArray *token_arr,
   first_pass(program_arr, instruction_arr, directive_arr,
              symbol_table, def_table);
 
-  printf("Rótulos declarados:\n");
-  for (int i = 0; i < symbol_table->back; i++)
-  {
-    printf("%s: %d, ",
-           symbol_table->array[i]->token, symbol_table->array[i]->value);
-  }
-  printf("\n\n");
-
   if (debug_flag)
   {
+    printf("Rótulos declarados:\n");
+    for (int i = 0; i < symbol_table->back; i++)
+    {
+      printf("%s: %d, ",
+             symbol_table->array[i]->token, symbol_table->array[i]->value);
+    }
+    printf("\n\n");
+
     printf("Tabela de definições:\n");
     for (int i = 0; i < def_table->back; i++)
       printf("%s: %d, ",
@@ -465,4 +549,6 @@ int two_pass(TokenArray *token_arr,
       printf("%s ", program_arr->array[i]);
     printf("\n\n");
   }
+
+  return generate_object(&program_arr, symbol_table, def_table, use_table, pendency_arr, instruction_arr);
 }
